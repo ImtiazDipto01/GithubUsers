@@ -15,7 +15,7 @@ import com.imtiaz.githubuserstest.domain.model.GithubUser
 
 class UsersAdapter : RecyclerView.Adapter<UsersAdapter.MyViewHolder>() {
 
-    val DIFF_CALLBACK = object : DiffUtil.ItemCallback<GithubUser>() {
+    private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<GithubUser>() {
         override fun areItemsTheSame(oldItem: GithubUser, newItem: GithubUser): Boolean {
             return oldItem.login == newItem.login
         }
