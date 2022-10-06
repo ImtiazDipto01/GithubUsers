@@ -15,6 +15,7 @@ import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.bumptech.glide.request.RequestOptions
 import com.imtiaz.githubuserstest.R
 import com.imtiaz.githubuserstest.core.extensions.Resource
+import com.imtiaz.githubuserstest.core.extensions.loadImage
 import com.imtiaz.githubuserstest.core.extensions.setup
 import com.imtiaz.githubuserstest.databinding.FragmentProfileBinding
 import com.imtiaz.githubuserstest.domain.model.GithubUser
@@ -86,6 +87,7 @@ class ProfileFragment : Fragment() {
 
     private fun updateProfileInfo(user: GithubUser) = _binding.apply {
         user.apply {
+            imgUser.loadImage(user.avatarUrl)
             textUserLogin.text = login ?: ""
             textUserName.text = name ?: getString(R.string.name_not_found)
             textUserLocation.text = location ?: getString(R.string.location_not_found)
@@ -97,16 +99,6 @@ class ProfileFragment : Fragment() {
                 textLeftTitleCount.text = followers.toString()
                 textRightTitleCount.text = following.toString()
             }
-            val options: RequestOptions = RequestOptions()
-                .transform(FitCenter())
-                .placeholder(R.drawable.placeholder)
-                .error(R.drawable.placeholder)
-                .priority(Priority.HIGH)
-
-            Glide.with(imgUser)
-                .load(user.avatarUrl)
-                .apply(options)
-                .into(imgUser)
         }
     }
 }

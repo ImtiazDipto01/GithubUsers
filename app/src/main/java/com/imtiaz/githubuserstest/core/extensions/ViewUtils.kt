@@ -1,7 +1,14 @@
 package com.imtiaz.githubuserstest.core.extensions
 
 import android.app.Activity
+import android.widget.ImageView
 import androidx.core.content.ContextCompat
+import com.bumptech.glide.Glide
+import com.bumptech.glide.Priority
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.resource.bitmap.FitCenter
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.MaterialToolbar
 import com.imtiaz.githubuserstest.R
@@ -25,8 +32,18 @@ fun MaterialToolbar.setup(
         context,
         R.drawable.ic_toolbar_back
     ) else null
-    (this.layoutParams as AppBarLayout.LayoutParams).scrollFlags =
-        AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or
-                AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS or
-                AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP
+}
+
+fun ImageView.loadImage(url: String?) {
+    val options: RequestOptions = RequestOptions()
+        .transform(FitCenter())
+        .placeholder(R.drawable.placeholder)
+        .error(R.drawable.placeholder)
+        .priority(Priority.HIGH)
+
+    Glide.with(this)
+        .load(url)
+        .apply(options)
+        .diskCacheStrategy(DiskCacheStrategy.ALL)
+        .into(this)
 }

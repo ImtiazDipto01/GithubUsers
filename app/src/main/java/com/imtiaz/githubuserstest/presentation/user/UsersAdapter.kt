@@ -10,6 +10,7 @@ import com.bumptech.glide.Priority
 import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.bumptech.glide.request.RequestOptions
 import com.imtiaz.githubuserstest.R
+import com.imtiaz.githubuserstest.core.extensions.loadImage
 import com.imtiaz.githubuserstest.databinding.ItemUsersBinding
 import com.imtiaz.githubuserstest.domain.model.GithubUser
 
@@ -58,17 +59,7 @@ class UsersAdapter(private val onItemClick:(GithubUser) -> Unit) : RecyclerView.
         fun bind(user: GithubUser) {
             _binding.apply {
                 textUserName.text = user.login ?: ""
-
-                val options: RequestOptions = RequestOptions()
-                    .transform(FitCenter())
-                    .placeholder(R.drawable.placeholder)
-                    .error(R.drawable.placeholder)
-                    .priority(Priority.HIGH)
-
-                Glide.with(imgUser)
-                    .load(user.avatarUrl)
-                    .apply(options)
-                    .into(imgUser)
+                imgUser.loadImage(user.avatarUrl)
             }
         }
     }
