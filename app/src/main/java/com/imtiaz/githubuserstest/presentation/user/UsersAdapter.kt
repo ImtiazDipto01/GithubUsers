@@ -13,7 +13,7 @@ import com.imtiaz.githubuserstest.R
 import com.imtiaz.githubuserstest.databinding.ItemUsersBinding
 import com.imtiaz.githubuserstest.domain.model.GithubUser
 
-class UsersAdapter : RecyclerView.Adapter<UsersAdapter.MyViewHolder>() {
+class UsersAdapter(private val onItemClick:() -> Unit) : RecyclerView.Adapter<UsersAdapter.MyViewHolder>() {
 
     private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<GithubUser>() {
         override fun areItemsTheSame(oldItem: GithubUser, newItem: GithubUser): Boolean {
@@ -48,6 +48,12 @@ class UsersAdapter : RecyclerView.Adapter<UsersAdapter.MyViewHolder>() {
 
     inner class MyViewHolder(binding: ItemUsersBinding) : RecyclerView.ViewHolder(binding.root) {
         private val _binding: ItemUsersBinding = binding
+
+        init {
+            itemView.setOnClickListener {
+                onItemClick()
+            }
+        }
 
         fun bind(user: GithubUser) {
             _binding.apply {

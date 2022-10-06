@@ -11,7 +11,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.imtiaz.githubuserstest.R
 import com.imtiaz.githubuserstest.core.extensions.Resource
+import com.imtiaz.githubuserstest.core.extensions.navigateTo
 import com.imtiaz.githubuserstest.core.extensions.setup
+import com.imtiaz.githubuserstest.core.extensions.usersToProfile
 import com.imtiaz.githubuserstest.databinding.FragmentUsersBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
@@ -75,7 +77,9 @@ class UsersFragment : Fragment() {
 
     private fun initRecyclerView() = _binding.apply {
         recyclerview.apply {
-            userAdapter = UsersAdapter()
+            userAdapter = UsersAdapter {
+                requireActivity().navigateTo(usersToProfile())
+            }
             layoutManager = LinearLayoutManager(context)
             adapter = userAdapter
         }

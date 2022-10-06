@@ -9,5 +9,14 @@
         android:id="@+id/startFragment"
         android:name="com.imtiaz.githubuserstest.presentation.user.UsersFragment"
         android:label="fragment_start"
-        tools:layout="@layout/fragment_users" />
+        tools:layout="@layout/fragment_users" >
+        <action
+            android:id="@+id/action_startFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.imtiaz.githubuserstest.presentation.profile.ProfileFragment"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile" />
 </navigation>

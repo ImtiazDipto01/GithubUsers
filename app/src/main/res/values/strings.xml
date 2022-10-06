@@ -12,4 +12,6 @@
     <string name="demo_repo_count">65</string>
     <string name="text_public_gist">Public Gists</string>
     <string name="text_followers">Followers</string>
+    <string name="text_followings">Followings</string>
+    <string name="user_profile">User profile</string>
 </resources>
