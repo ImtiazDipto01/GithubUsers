@@ -5,7 +5,7 @@ import com.imtiaz.githubuserstest.data.remote.dto.UserProfileResponse
 import com.imtiaz.githubuserstest.domain.model.GithubUser
 import javax.inject.Inject
 
-class ProfileUserMapper @Inject constructor(): EntityMapper<UserProfileResponse, GithubUser>() {
+class ProfileMapper @Inject constructor(): EntityMapper<UserProfileResponse, GithubUser>() {
 
     override fun mapFromEntity(entity: UserProfileResponse): GithubUser {
         return GithubUser(
