@@ -9,7 +9,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.imtiaz.githubuserstest.R
 import com.imtiaz.githubuserstest.core.extensions.Resource
+import com.imtiaz.githubuserstest.core.extensions.setup
 import com.imtiaz.githubuserstest.databinding.FragmentUsersBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
@@ -34,11 +36,20 @@ class UsersFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        observePicInfo()
+        collectUsers()
+        initUi()
         initRecyclerView()
     }
 
-    private fun observePicInfo() {
+    private fun initUi() = _binding.apply {
+        layoutAppBar.toolBar.setup(
+            requireActivity(),
+            title = getString(R.string.app_name),
+            isNavIconEnable = false
+        )
+    }
+
+    private fun collectUsers() {
         lifecycleScope.launchWhenStarted {
             viewModel.usersFlow.collect {
                 when (it) {
@@ -46,7 +57,7 @@ class UsersFragment : Fragment() {
                         _binding.pbLoading.isVisible = true
                     }
                     is Resource.Success -> {
-                        Timber.e("UserFragment: ${it.data}")
+                        //Timber.e("UserFragment: ${it.data}")
                         _binding.apply {
                             pbLoading.isVisible = false
                             recyclerview.isVisible = true
