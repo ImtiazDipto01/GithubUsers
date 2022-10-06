@@ -1,5 +1,9 @@
 package com.imtiaz.githubuserstest.domain.model
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class GithubUser(
     val login: String? = null,
     val avatarUrl: String? = null,
@@ -11,4 +15,4 @@ data class GithubUser(
     val public_gist: Int = 0,
     val followers: Int = 0,
     val following: Int = 0
-)
+) : Parcelable

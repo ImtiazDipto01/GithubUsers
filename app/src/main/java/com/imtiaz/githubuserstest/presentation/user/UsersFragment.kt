@@ -78,7 +78,7 @@ class UsersFragment : Fragment() {
     private fun initRecyclerView() = _binding.apply {
         recyclerview.apply {
             userAdapter = UsersAdapter {
-                requireActivity().navigateTo(usersToProfile())
+                requireActivity().navigateTo(usersToProfile(it))
             }
             layoutManager = LinearLayoutManager(context)
             adapter = userAdapter

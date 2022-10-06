@@ -14,4 +14,6 @@
     <string name="text_followers">Followers</string>
     <string name="text_followings">Followings</string>
     <string name="user_profile">User profile</string>
+    <string name="name_not_found">User name not found</string>
+    <string name="location_not_found">Location not found</string>
 </resources>

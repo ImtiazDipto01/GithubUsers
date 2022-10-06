@@ -14,9 +14,17 @@
             android:id="@+id/action_startFragment_to_profileFragment"
             app:destination="@id/profileFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.imtiaz.githubuserstest.presentation.profile.ProfileFragment"
         android:label="fragment_profile"
-        tools:layout="@layout/fragment_profile" />
+        tools:layout="@layout/fragment_profile">
+
+        <argument
+            android:name="user"
+            app:argType="com.imtiaz.githubuserstest.domain.model.GithubUser" />
+
+    </fragment>
+
 </navigation>
