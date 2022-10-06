@@ -1,10 +1,11 @@
-package com.imtiaz.githubuserstest.data.remote.repository
+package com.imtiaz.githubuserstest.data.repository
 
 import com.imtiaz.githubuserstest.core.extensions.Resource
 import com.imtiaz.githubuserstest.core.extensions.safeApiCall
+import com.imtiaz.githubuserstest.data.local.db.dao.UserDao
 import com.imtiaz.githubuserstest.data.mapper.ProfileMapper
 import com.imtiaz.githubuserstest.data.remote.service.ProfileService
-import com.imtiaz.githubuserstest.domain.model.GithubUser
+import com.imtiaz.githubuserstest.data.local.db.entity.GithubUser
 import com.imtiaz.githubuserstest.domain.repository.ProfileRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.transform

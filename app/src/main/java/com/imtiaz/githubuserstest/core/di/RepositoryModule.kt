@@ -1,10 +1,11 @@
 package com.imtiaz.githubuserstest.core.di
 
+import com.imtiaz.githubuserstest.data.local.db.dao.UserDao
 import com.imtiaz.githubuserstest.data.mapper.GithubUserMapper
 import com.imtiaz.githubuserstest.data.mapper.ProfileMapper
 import com.imtiaz.githubuserstest.data.remote.dto.UserProfileResponse
-import com.imtiaz.githubuserstest.data.remote.repository.ProfileRepositoryImp
-import com.imtiaz.githubuserstest.data.remote.repository.UsersRepositoryImp
+import com.imtiaz.githubuserstest.data.repository.ProfileRepositoryImp
+import com.imtiaz.githubuserstest.data.repository.UsersRepositoryImp
 import com.imtiaz.githubuserstest.data.remote.service.ApiService
 import com.imtiaz.githubuserstest.data.remote.service.ProfileService
 import com.imtiaz.githubuserstest.domain.repository.ProfileRepository
@@ -21,8 +22,11 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideUsersRepository(service: ApiService, mapper: GithubUserMapper): UsersRepository =
-        UsersRepositoryImp(service, mapper)
+    fun provideUsersRepository(
+        service: ApiService,
+        mapper: GithubUserMapper,
+        userDao: UserDao
+    ): UsersRepository = UsersRepositoryImp(service, mapper, userDao)
 
     @Provides
     @Singleton

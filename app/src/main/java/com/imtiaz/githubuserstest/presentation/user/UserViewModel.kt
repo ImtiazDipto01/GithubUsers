@@ -3,7 +3,7 @@ package com.imtiaz.githubuserstest.presentation.user
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imtiaz.githubuserstest.core.extensions.Resource
-import com.imtiaz.githubuserstest.domain.model.GithubUser
+import com.imtiaz.githubuserstest.data.local.db.entity.GithubUser
 import com.imtiaz.githubuserstest.domain.usecase.GetUsersUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

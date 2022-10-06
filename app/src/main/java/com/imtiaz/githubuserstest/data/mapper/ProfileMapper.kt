@@ -2,21 +2,21 @@ package com.imtiaz.githubuserstest.data.mapper
 
 import com.imtiaz.githubuserstest.core.extensions.EntityMapper
 import com.imtiaz.githubuserstest.data.remote.dto.UserProfileResponse
-import com.imtiaz.githubuserstest.domain.model.GithubUser
+import com.imtiaz.githubuserstest.data.local.db.entity.GithubUser
 import javax.inject.Inject
 
 class ProfileMapper @Inject constructor(): EntityMapper<UserProfileResponse, GithubUser>() {
 
     override fun mapFromEntity(entity: UserProfileResponse): GithubUser {
         return GithubUser(
-            login = entity.login,
+            login = entity.login!!,
             avatarUrl = entity.avatarUrl,
             nodeId = entity.nodeId,
             url = entity.url,
             name = entity.name,
             location = entity.location,
-            public_repo = entity.publicRepos ?: 0,
-            public_gist = entity.publicGists ?: 0,
+            publicRepos = entity.publicRepos ?: 0,
+            publicGists = entity.publicGists ?: 0,
             followers = entity.followers ?: 0,
             following = entity.following ?: 0
         )
@@ -30,8 +30,8 @@ class ProfileMapper @Inject constructor(): EntityMapper<UserProfileResponse, Git
             url = domainModel.url,
             name = domainModel.name,
             location = domainModel.location,
-            publicRepos = domainModel.public_repo,
-            publicGists = domainModel.public_gist,
+            publicRepos = domainModel.publicRepos,
+            publicGists = domainModel.publicGists,
             followers = domainModel.followers,
             following = domainModel.following
         )

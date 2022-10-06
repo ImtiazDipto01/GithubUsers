@@ -2,14 +2,14 @@ package com.imtiaz.githubuserstest.data.mapper
 
 import com.imtiaz.githubuserstest.core.extensions.EntityMapper
 import com.imtiaz.githubuserstest.data.remote.dto.GithubUserResponse
-import com.imtiaz.githubuserstest.domain.model.GithubUser
+import com.imtiaz.githubuserstest.data.local.db.entity.GithubUser
 import javax.inject.Inject
 
 class GithubUserMapper @Inject constructor(): EntityMapper<GithubUserResponse, GithubUser>() {
 
     override fun mapFromEntity(entity: GithubUserResponse): GithubUser {
         return GithubUser(
-            login = entity.login,
+            login = entity.login!!,
             avatarUrl = entity.avatarUrl,
             nodeId = entity.nodeId,
             url = entity.url

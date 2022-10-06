@@ -23,7 +23,7 @@
 
         <argument
             android:name="user"
-            app:argType="com.imtiaz.githubuserstest.domain.model.GithubUser" />
+            app:argType="com.imtiaz.githubuserstest.data.local.db.entity.GithubUser" />
 
     </fragment>
 

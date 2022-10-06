@@ -5,21 +5,15 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
-import com.bumptech.glide.Glide
-import com.bumptech.glide.Priority
-import com.bumptech.glide.load.resource.bitmap.FitCenter
-import com.bumptech.glide.request.RequestOptions
 import com.imtiaz.githubuserstest.R
 import com.imtiaz.githubuserstest.core.extensions.Resource
 import com.imtiaz.githubuserstest.core.extensions.loadImage
 import com.imtiaz.githubuserstest.core.extensions.setup
 import com.imtiaz.githubuserstest.databinding.FragmentProfileBinding
-import com.imtiaz.githubuserstest.domain.model.GithubUser
-import com.imtiaz.githubuserstest.presentation.user.UserViewModel
+import com.imtiaz.githubuserstest.data.local.db.entity.GithubUser
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import timber.log.Timber
@@ -92,8 +86,8 @@ class ProfileFragment : Fragment() {
             textUserName.text = name ?: getString(R.string.name_not_found)
             textUserLocation.text = location ?: getString(R.string.location_not_found)
             layoutUserRepoInfo.apply {
-                textLeftTitleCount.text = public_repo.toString()
-                textRightTitleCount.text = public_gist.toString()
+                textLeftTitleCount.text = publicRepos.toString()
+                textRightTitleCount.text = publicGists.toString()
             }
             layoutUserFollowerInfo.apply {
                 textLeftTitleCount.text = followers.toString()

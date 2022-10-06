@@ -5,14 +5,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.Priority
-import com.bumptech.glide.load.resource.bitmap.FitCenter
-import com.bumptech.glide.request.RequestOptions
-import com.imtiaz.githubuserstest.R
 import com.imtiaz.githubuserstest.core.extensions.loadImage
 import com.imtiaz.githubuserstest.databinding.ItemUsersBinding
-import com.imtiaz.githubuserstest.domain.model.GithubUser
+import com.imtiaz.githubuserstest.data.local.db.entity.GithubUser
 
 class UsersAdapter(private val onItemClick:(GithubUser) -> Unit) : RecyclerView.Adapter<UsersAdapter.MyViewHolder>() {
 
