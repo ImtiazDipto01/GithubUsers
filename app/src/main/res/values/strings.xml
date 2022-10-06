@@ -6,4 +6,10 @@
     <string name="search_user">Search Github user</string>
     <string name="img_search">image search</string>
     <string name="img_clear">image clear</string>
+    <string name="demo_user_real_name">Imtiaz Dipto</string>
+    <string name="demo_user_location">Dhaka, Bangladesh</string>
+    <string name="text_public_repo">Public Repos</string>
+    <string name="demo_repo_count">65</string>
+    <string name="text_public_gist">Public Gists</string>
+    <string name="text_followers">Followers</string>
 </resources>
