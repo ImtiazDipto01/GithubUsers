@@ -95,7 +95,7 @@ data class UserProfileResponse(
 	val name: String? = null,
 
 	@field:SerializedName("location")
-	val location: Any? = null,
+	val location: String? = null,
 
 	@field:SerializedName("node_id")
 	val nodeId: String? = null

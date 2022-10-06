@@ -5,4 +5,10 @@ data class GithubUser(
     val avatarUrl: String? = null,
     val nodeId: String? = null,
     val url: String? = null,
+    val name: String? = null,
+    val location: String? = null,
+    val public_repo: Int = 0,
+    val public_gist: Int = 0,
+    val followers: Int = 0,
+    val following: Int = 0
 )
