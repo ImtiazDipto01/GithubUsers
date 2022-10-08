@@ -28,8 +28,9 @@ object RepositoryModule {
     fun provideUsersRepository(
         service: ApiService,
         mapper: GithubUserMapper,
-        userDao: UserDao
-    ): UsersRepository = UsersRepositoryImp(service, mapper, userDao)
+        userDao: UserDao,
+        pageDao: PageDao
+    ): UsersRepository = UsersRepositoryImp(service, mapper, userDao, pageDao)
 
     @Provides
     @Singleton

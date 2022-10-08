@@ -11,10 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.imtiaz.githubuserstest.R
-import com.imtiaz.githubuserstest.core.extensions.Resource
-import com.imtiaz.githubuserstest.core.extensions.navigateTo
-import com.imtiaz.githubuserstest.core.extensions.setup
-import com.imtiaz.githubuserstest.core.extensions.usersToProfile
+import com.imtiaz.githubuserstest.core.extensions.*
 import com.imtiaz.githubuserstest.databinding.FragmentUsersBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
@@ -56,7 +53,8 @@ class UsersFragment : Fragment() {
     private fun collectUsersFromDb() {
         lifecycleScope.launchWhenStarted {
             viewModel.getUsers().collect {
-                Log.d("isListEmpty", it.isEmpty().toString())
+                userAdapter.submitList(it)
+                checkIfNeedInitialFetch()
             }
         }
     }
@@ -65,21 +63,10 @@ class UsersFragment : Fragment() {
         lifecycleScope.launchWhenStarted {
             viewModel.fetchUsersFlow.collect {
                 when (it) {
-                    is Resource.Loading -> {
-                        _binding.pbLoading.isVisible = true
-                    }
-                    is Resource.Success -> {
-                        /*//Timber.e("UserFragment: ${it.data}")
-                        _binding.apply {
-                            pbLoading.isVisible = false
-                            recyclerview.isVisible = true
-                            userAdapter.submitList(it.data)
-                        }*/
-                        _binding.pbLoading.isVisible = false
-                        viewModel.updateLastPage()
-                    }
+                    is Resource.Loading -> handleLoadingState(true)
+                    is Resource.Success -> handleLoadingState(false)
                     is Resource.Error -> {
-                        _binding.pbLoading.isVisible = false
+                        handleLoadingState(false)
                     }
                     else -> Unit
                 }
@@ -95,6 +82,15 @@ class UsersFragment : Fragment() {
             layoutManager = LinearLayoutManager(context)
             adapter = userAdapter
         }
-        viewModel.fetchUsers()
+    }
+
+    private fun handleLoadingState(isLoading: Boolean) = _binding.apply {
+        pbLoading.isVisible = isLoading
+        recyclerview.isVisible = !isLoading
+    }
+
+    private fun checkIfNeedInitialFetch() {
+        if(userAdapter.itemCount == 0)
+            viewModel.fetchUsers(FIRST_PAGE)
     }
 }
