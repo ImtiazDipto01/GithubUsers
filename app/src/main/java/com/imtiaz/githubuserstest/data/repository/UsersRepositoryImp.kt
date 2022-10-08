@@ -17,18 +17,16 @@ class UsersRepositoryImp @Inject constructor(
     private val userDao: UserDao
 ) : UsersRepository {
 
-    override suspend fun getUsers(): Flow<Resource<List<GithubUser>>> = safeApiCall {
-        apiService.getUsers()
+    override suspend fun fetchUsers(): Flow<Resource<List<GithubUser>>> = safeApiCall {
+        apiService.fetchUsers()
     }.transform {
         if (it is Resource.Success){
-            getUsersFromDb()
+            //getUsersFromDb()
             emit(Resource.Success(mapper.mapFromEntityList(it.data)))
         }
         else emit(it as Resource<List<GithubUser>>)
     }
 
-    private suspend fun getUsersFromDb() {
-        userDao.getUser()
-    }
+    override fun getUsers(): Flow<List<GithubUser>> = userDao.getUsers()
 
 }

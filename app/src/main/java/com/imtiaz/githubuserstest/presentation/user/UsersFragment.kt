@@ -1,6 +1,7 @@
 package com.imtiaz.githubuserstest.presentation.user
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -38,9 +39,10 @@ class UsersFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        collectUsers()
         initUi()
         initRecyclerView()
+        observeFetchUsers()
+        collectUsersFromDb()
     }
 
     private fun initUi() = _binding.apply {
@@ -51,9 +53,17 @@ class UsersFragment : Fragment() {
         )
     }
 
-    private fun collectUsers() {
+    private fun collectUsersFromDb() {
         lifecycleScope.launchWhenStarted {
-            viewModel.usersFlow.collect {
+            viewModel.getUsers().collect {
+                Log.d("isListEmpty", it.isEmpty().toString())
+            }
+        }
+    }
+
+    private fun observeFetchUsers() {
+        lifecycleScope.launchWhenStarted {
+            viewModel.fetchUsersFlow.collect {
                 when (it) {
                     is Resource.Loading -> {
                         _binding.pbLoading.isVisible = true
@@ -83,6 +93,6 @@ class UsersFragment : Fragment() {
             layoutManager = LinearLayoutManager(context)
             adapter = userAdapter
         }
-        viewModel.getUsers()
+        //viewModel.getUsers()
     }
 }

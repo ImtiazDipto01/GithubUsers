@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.imtiaz.githubuserstest.data.local.db.entity.GithubUser
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface UserDao {
@@ -19,5 +20,5 @@ interface UserDao {
     suspend fun deleteUsers()
 
     @Query("select * from user")
-    suspend fun getUser(): List<GithubUser>
+    fun getUsers(): Flow<List<GithubUser>>
 }

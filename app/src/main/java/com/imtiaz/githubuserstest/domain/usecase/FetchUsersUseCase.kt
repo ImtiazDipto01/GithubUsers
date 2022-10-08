@@ -6,8 +6,8 @@ import com.imtiaz.githubuserstest.domain.repository.UsersRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class GetUsersUseCase @Inject constructor(
+class FetchUsersUseCase @Inject constructor(
     private val repository: UsersRepository
 ) {
-    fun execute(): Flow<List<GithubUser>> = repository.getUsers()
+    suspend fun execute(): Flow<Resource<List<GithubUser>>> = repository.fetchUsers()
 }
