@@ -14,7 +14,7 @@ interface UserDao {
     suspend fun insert(user: GithubUser)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(user: List<GithubUser>)
+    suspend fun insertUsers(user: List<GithubUser>)
 
     @Query("delete from user")
     suspend fun deleteUsers()

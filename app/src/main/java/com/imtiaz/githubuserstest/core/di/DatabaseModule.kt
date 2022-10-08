@@ -3,6 +3,7 @@ package com.imtiaz.githubuserstest.core.di
 import android.content.Context
 import androidx.room.Room
 import com.imtiaz.githubuserstest.data.local.db.AppDatabase
+import com.imtiaz.githubuserstest.data.local.db.dao.PageDao
 import com.imtiaz.githubuserstest.data.local.db.dao.UserDao
 import dagger.Module
 import dagger.Provides
@@ -27,4 +28,8 @@ object DatabaseModule {
     @Singleton
     @Provides
     fun provideUserDao(appDatabae: AppDatabase): UserDao = appDatabae.userDao()
+
+    @Singleton
+    @Provides
+    fun providePageDao(appDatabae: AppDatabase): PageDao = appDatabae.pageDao()
 }

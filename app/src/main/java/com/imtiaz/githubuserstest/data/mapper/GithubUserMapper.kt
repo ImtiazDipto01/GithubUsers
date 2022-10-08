@@ -25,7 +25,7 @@ class GithubUserMapper @Inject constructor(): EntityMapper<GithubUserResponse, G
         )
     }
 
-    override fun mapFromEntityList(entityList: List<GithubUserResponse>): List<GithubUser> =
-        entityList.map { mapFromEntity(it) }
+    fun mapFromEntityList(entityList: List<GithubUserResponse>, page: Int): List<GithubUser> =
+        entityList.map { mapFromEntity(it).copy(page = page) }
 
 }

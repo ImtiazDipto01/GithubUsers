@@ -69,12 +69,14 @@ class UsersFragment : Fragment() {
                         _binding.pbLoading.isVisible = true
                     }
                     is Resource.Success -> {
-                        //Timber.e("UserFragment: ${it.data}")
+                        /*//Timber.e("UserFragment: ${it.data}")
                         _binding.apply {
                             pbLoading.isVisible = false
                             recyclerview.isVisible = true
                             userAdapter.submitList(it.data)
-                        }
+                        }*/
+                        _binding.pbLoading.isVisible = false
+                        viewModel.updateLastPage()
                     }
                     is Resource.Error -> {
                         _binding.pbLoading.isVisible = false
@@ -93,6 +95,6 @@ class UsersFragment : Fragment() {
             layoutManager = LinearLayoutManager(context)
             adapter = userAdapter
         }
-        //viewModel.getUsers()
+        viewModel.fetchUsers()
     }
 }

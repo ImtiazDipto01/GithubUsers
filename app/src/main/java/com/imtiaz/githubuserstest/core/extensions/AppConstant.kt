@@ -12,3 +12,4 @@ const val CONNECT_TIMEOUT_S: Long = 60
 const val READ_TIMEOUT_S: Long = 60
 const val WRITE_TIMEOUT_S: Long = 60
 const val APP_PREF = "Android_Pref"
+const val PAGE_KEY =  "com.imtiaz.githubuserstest.pagekey"

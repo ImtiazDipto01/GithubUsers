@@ -21,5 +21,6 @@ data class GithubUser(
     @ColumnInfo(name = "public_repos") val publicRepos: Int = 0,
     @ColumnInfo(name = "public_gists") val publicGists: Int = 0,
     @ColumnInfo(name = "followers") val followers: Int = 0,
-    @ColumnInfo(name = "following") val following: Int = 0
+    @ColumnInfo(name = "following") val following: Int = 0,
+    @ColumnInfo(name = "page") val page: Int = 0
 ) : Parcelable
