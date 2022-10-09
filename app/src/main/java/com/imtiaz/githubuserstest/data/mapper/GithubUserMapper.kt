@@ -12,7 +12,8 @@ class GithubUserMapper @Inject constructor(): EntityMapper<GithubUserResponse, G
             login = entity.login!!,
             avatarUrl = entity.avatarUrl,
             nodeId = entity.nodeId,
-            url = entity.url
+            url = entity.url,
+            id = entity.id!!
         )
     }
 
@@ -21,11 +22,12 @@ class GithubUserMapper @Inject constructor(): EntityMapper<GithubUserResponse, G
             login = domainModel.login,
             avatarUrl = domainModel.avatarUrl,
             nodeId = domainModel.nodeId,
-            url = domainModel.url
+            url = domainModel.url,
+            id = domainModel.id
         )
     }
 
-    fun mapFromEntityList(entityList: List<GithubUserResponse>, page: Int): List<GithubUser> =
-        entityList.map { mapFromEntity(it).copy(page = page) }
+    fun mapFromEntityList(entityList: List<GithubUserResponse>, lastUserId: Int): List<GithubUser> =
+        entityList.map { mapFromEntity(it).copy(since = lastUserId) }
 
 }

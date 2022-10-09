@@ -14,7 +14,7 @@ data class Page(
   @NonNull
   val key: String = PAGE_KEY,
 
-  @ColumnInfo(name = "last_page")
-  val lastPage: Int
+  @ColumnInfo(name = "since")
+  val since: Int
 
 )

@@ -10,6 +10,7 @@ class ProfileMapper @Inject constructor(): EntityMapper<UserProfileResponse, Git
     override fun mapFromEntity(entity: UserProfileResponse): GithubUser {
         return GithubUser(
             login = entity.login!!,
+            id = entity.id!!,
             avatarUrl = entity.avatarUrl,
             nodeId = entity.nodeId,
             url = entity.url,
@@ -25,6 +26,7 @@ class ProfileMapper @Inject constructor(): EntityMapper<UserProfileResponse, Git
     override fun mapToEntity(domainModel: GithubUser): UserProfileResponse {
         return UserProfileResponse(
             login = domainModel.login,
+            id = domainModel.id,
             avatarUrl = domainModel.avatarUrl,
             nodeId = domainModel.nodeId,
             url = domainModel.url,
@@ -33,7 +35,7 @@ class ProfileMapper @Inject constructor(): EntityMapper<UserProfileResponse, Git
             publicRepos = domainModel.publicRepos,
             publicGists = domainModel.publicGists,
             followers = domainModel.followers,
-            following = domainModel.following
+            following = domainModel.following,
         )
     }
 

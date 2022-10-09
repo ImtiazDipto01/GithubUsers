@@ -20,13 +20,15 @@ class UsersRepositoryImp @Inject constructor(
     private val pageDao: PageDao,
 ) : UsersRepository {
 
-    override suspend fun fetchUsers(page: Int): Flow<State<List<GithubUser>>> = safeApiCall {
-        apiService.fetchUsers(page)
+    override suspend fun fetchUsers(since: Int): Flow<State<List<GithubUser>>> = safeApiCall {
+        apiService.fetchUsers(since)
     }.transform {
         if (it is State.Success){
-            val users = mapper.mapFromEntityList(it.data, page)
+            val users = mapper.mapFromEntityList(it.data, since)
+            if(users.isNotEmpty()) {
+                updateLastUserId(users[users.size - 1].id)
+            }
             insertUsers(users)
-            updatePageNumber(page)
             emit(State.Success(users))
         }
         else emit(it as State<List<GithubUser>>)
@@ -36,6 +38,6 @@ class UsersRepositoryImp @Inject constructor(
 
     override fun getUsers(): Flow<List<GithubUser>> = userDao.getUsers()
 
-    private suspend fun updatePageNumber(page: Int) = pageDao.insert(Page(lastPage = page))
+    private suspend fun updateLastUserId(id: Int) = pageDao.insert(Page(since = id))
 
 }

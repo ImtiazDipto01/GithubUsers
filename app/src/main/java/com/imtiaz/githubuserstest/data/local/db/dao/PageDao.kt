@@ -13,6 +13,6 @@ interface PageDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(user: Page)
 
-    @Query("select last_page from page where `key` = :pageKey")
-    fun getLastPage(pageKey: String = PAGE_KEY): Int
+    @Query("select since from page where `key` = :pageKey")
+    suspend fun getSince(pageKey: String = PAGE_KEY): Int
 }

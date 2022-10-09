@@ -9,5 +9,5 @@ import javax.inject.Inject
 class FetchUsersUseCase @Inject constructor(
     private val repository: UsersRepository
 ) {
-    suspend fun execute(page: Int): Flow<State<List<GithubUser>>> = repository.fetchUsers(page)
+    suspend fun execute(since: Int): Flow<State<List<GithubUser>>> = repository.fetchUsers(since)
 }

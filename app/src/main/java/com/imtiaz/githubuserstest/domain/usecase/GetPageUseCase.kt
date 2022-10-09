@@ -6,5 +6,5 @@ import javax.inject.Inject
 class GetPageUseCase @Inject constructor(
     private val repository: PageRepository
 ) {
-    suspend fun execute() = repository.updateLastPage()
+    suspend fun execute() = repository.getSince()
 }

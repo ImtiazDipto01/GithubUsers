@@ -11,13 +11,6 @@ class PageRepositoryImp @Inject constructor(
     val pageDao: PageDao
 ) : PageRepository {
 
-    override suspend fun updateLastPage() {
-        withContext(Dispatchers.IO) {
-            val lastPage = pageDao.getLastPage()
-            pageDao.insert(Page(lastPage = lastPage + 1))
-        }
-    }
-
-    override fun getLastPage(): Int = pageDao.getLastPage()
+    override suspend fun getSince(): Int = pageDao.getSince()
 
 }

@@ -23,18 +23,21 @@ class UserViewModel @Inject constructor(
         MutableStateFlow(State.Empty())
     val fetchUsersFlow = _fetchUsersStateFlow.asStateFlow()
 
-    fun fetchUsers(page: Int) {
+    fun fetchUsers(since: Int) {
         viewModelScope.launch {
-            fetchUsersUseCase.execute(page).collect {
+            fetchUsersUseCase.execute(since).collect {
                 _fetchUsersStateFlow.value = it
             }
         }
     }
 
-    fun getUsers(): Flow<List<GithubUser>> = getUsersUseCase.execute()
-
     fun startPaging() {
-
+        viewModelScope.launch {
+            val since = getPageUserCase.execute()
+            fetchUsers(since)
+        }
     }
+
+    fun getUsers(): Flow<List<GithubUser>> = getUsersUseCase.execute()
 
 }

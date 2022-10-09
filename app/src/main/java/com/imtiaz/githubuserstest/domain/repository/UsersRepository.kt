@@ -5,7 +5,7 @@ import com.imtiaz.githubuserstest.data.local.db.entity.GithubUser
 import kotlinx.coroutines.flow.Flow
 
 interface UsersRepository {
-    suspend fun fetchUsers(page: Int): Flow<State<List<GithubUser>>>
+    suspend fun fetchUsers(since: Int): Flow<State<List<GithubUser>>>
     suspend fun insertUsers(users: List<GithubUser>)
     fun getUsers(): Flow<List<GithubUser>>
 }

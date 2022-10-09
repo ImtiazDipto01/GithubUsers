@@ -81,7 +81,10 @@ class UsersFragment : Fragment() {
             layoutManager = LinearLayoutManager(context)
             adapter = userAdapter
             PaginateRecyclerview(this, layoutManager) {
-
+                if(!isLoading){
+                    isLoading = true
+                    viewModel.startPaging()
+                }
             }
         }
     }
