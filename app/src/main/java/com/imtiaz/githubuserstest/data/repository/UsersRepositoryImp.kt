@@ -1,6 +1,6 @@
 package com.imtiaz.githubuserstest.data.repository
 
-import com.imtiaz.githubuserstest.core.extensions.Resource
+import com.imtiaz.githubuserstest.core.extensions.State
 import com.imtiaz.githubuserstest.core.extensions.safeApiCall
 import com.imtiaz.githubuserstest.data.local.db.dao.PageDao
 import com.imtiaz.githubuserstest.data.local.db.dao.UserDao
@@ -20,16 +20,16 @@ class UsersRepositoryImp @Inject constructor(
     private val pageDao: PageDao,
 ) : UsersRepository {
 
-    override suspend fun fetchUsers(page: Int): Flow<Resource<List<GithubUser>>> = safeApiCall {
+    override suspend fun fetchUsers(page: Int): Flow<State<List<GithubUser>>> = safeApiCall {
         apiService.fetchUsers(page)
     }.transform {
-        if (it is Resource.Success){
+        if (it is State.Success){
             val users = mapper.mapFromEntityList(it.data, page)
             insertUsers(users)
             updatePageNumber(page)
-            emit(Resource.Success(users))
+            emit(State.Success(users))
         }
-        else emit(it as Resource<List<GithubUser>>)
+        else emit(it as State<List<GithubUser>>)
     }
 
     override suspend fun insertUsers(users: List<GithubUser>) = userDao.insertUsers(users)

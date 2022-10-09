@@ -13,16 +13,16 @@ import java.net.SocketTimeoutException
 
 suspend inline fun <reified T> safeApiCall(
     crossinline processApiCall: suspend () -> Response<T>
-): Flow<Resource<T>> = flow {
+): Flow<State<T>> = flow {
     try {
-        emit(Resource.Loading())
+        emit(State.Loading())
         val response = processApiCall.invoke()
         val data = handleApiResponse(response)
 
-        if (data is T) emit(Resource.Success(data))
-        else emit(Resource.Error(Throwable(data as Exception)))
+        if (data is T) emit(State.Success(data))
+        else emit(State.Error(Throwable(data as Exception)))
     } catch (e: Exception) {
-        emit(Resource.Error(Throwable(Exception(getCustomErrorMessage(e)))))
+        emit(State.Error(Throwable(Exception(getCustomErrorMessage(e)))))
     }
 }.flowOn(Dispatchers.IO)
 

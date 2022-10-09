@@ -15,7 +15,6 @@ import com.imtiaz.githubuserstest.core.extensions.*
 import com.imtiaz.githubuserstest.databinding.FragmentUsersBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
-import timber.log.Timber
 
 @AndroidEntryPoint
 class UsersFragment : Fragment() {
@@ -24,6 +23,8 @@ class UsersFragment : Fragment() {
 
     private lateinit var userAdapter: UsersAdapter
     private lateinit var _binding: FragmentUsersBinding
+
+    private var isLoading = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -63,9 +64,9 @@ class UsersFragment : Fragment() {
         lifecycleScope.launchWhenStarted {
             viewModel.fetchUsersFlow.collect {
                 when (it) {
-                    is Resource.Loading -> handleLoadingState(true)
-                    is Resource.Success -> handleLoadingState(false)
-                    is Resource.Error -> {
+                    is State.Loading -> handleLoadingState(true)
+                    is State.Success -> handleLoadingState(false)
+                    is State.Error -> {
                         handleLoadingState(false)
                     }
                     else -> Unit
@@ -76,21 +77,35 @@ class UsersFragment : Fragment() {
 
     private fun initRecyclerView() = _binding.apply {
         recyclerview.apply {
-            userAdapter = UsersAdapter {
-                requireActivity().navigateTo(usersToProfile(it))
-            }
+            userAdapter = UsersAdapter { requireActivity().navigateTo(usersToProfile(it)) }
             layoutManager = LinearLayoutManager(context)
             adapter = userAdapter
+            PaginateRecyclerview(this, layoutManager) {
+
+            }
         }
     }
 
     private fun handleLoadingState(isLoading: Boolean) = _binding.apply {
+        this@UsersFragment.isLoading = isLoading
+
+        if(isLoading){
+            if(userAdapter.itemCount == 0){
+                pbLoading.isVisible = isLoading
+                recyclerview.isVisible = !isLoading
+            }
+            else {
+                loadingBottom.parentLayout.isVisible = isLoading
+            }
+            return@apply
+        }
         pbLoading.isVisible = isLoading
+        loadingBottom.parentLayout.isVisible = isLoading
         recyclerview.isVisible = !isLoading
     }
 
     private fun checkIfNeedInitialFetch() {
-        if(userAdapter.itemCount == 0)
+        if (userAdapter.itemCount == 0)
             viewModel.fetchUsers(FIRST_PAGE)
     }
 }

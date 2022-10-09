@@ -1,8 +1,7 @@
 package com.imtiaz.githubuserstest.data.repository
 
-import com.imtiaz.githubuserstest.core.extensions.Resource
+import com.imtiaz.githubuserstest.core.extensions.State
 import com.imtiaz.githubuserstest.core.extensions.safeApiCall
-import com.imtiaz.githubuserstest.data.local.db.dao.UserDao
 import com.imtiaz.githubuserstest.data.mapper.ProfileMapper
 import com.imtiaz.githubuserstest.data.remote.service.ProfileService
 import com.imtiaz.githubuserstest.data.local.db.entity.GithubUser
@@ -16,12 +15,12 @@ class ProfileRepositoryImp @Inject constructor(
     private val mapper: ProfileMapper
 ) : ProfileRepository {
 
-    override suspend fun getUserProfile(loginId: String): Flow<Resource<GithubUser>> = safeApiCall {
+    override suspend fun getUserProfile(loginId: String): Flow<State<GithubUser>> = safeApiCall {
         apiService.getUserProfile(loginId)
     }.transform {
-        if (it is Resource.Success)
-            emit(Resource.Success(mapper.mapFromEntity(it.data)))
-        else emit(it as Resource<GithubUser>)
+        if (it is State.Success)
+            emit(State.Success(mapper.mapFromEntity(it.data)))
+        else emit(it as State<GithubUser>)
     }
 
 }
