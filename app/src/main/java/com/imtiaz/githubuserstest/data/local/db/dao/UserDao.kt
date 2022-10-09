@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import com.imtiaz.githubuserstest.data.local.db.entity.GithubUser
 import kotlinx.coroutines.flow.Flow
 
@@ -16,9 +17,12 @@ interface UserDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertUsers(user: List<GithubUser>)
 
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun updateUsers(user: List<GithubUser>)
+
     @Query("delete from user")
     suspend fun deleteUsers()
 
-    @Query("select * from user")
+    @Query("select * from user order by id asc")
     fun getUsers(): Flow<List<GithubUser>>
 }

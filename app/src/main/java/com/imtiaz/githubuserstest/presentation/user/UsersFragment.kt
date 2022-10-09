@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.imtiaz.githubuserstest.R
 import com.imtiaz.githubuserstest.core.extensions.*
+import com.imtiaz.githubuserstest.data.local.db.entity.GithubUser
 import com.imtiaz.githubuserstest.databinding.FragmentUsersBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
@@ -77,11 +78,11 @@ class UsersFragment : Fragment() {
 
     private fun initRecyclerView() = _binding.apply {
         recyclerview.apply {
-            userAdapter = UsersAdapter { requireActivity().navigateTo(usersToProfile(it)) }
+            userAdapter = UsersAdapter(onItemClick(), onScrollUpdateData())
             layoutManager = LinearLayoutManager(context)
             adapter = userAdapter
             PaginateRecyclerview(this, layoutManager) {
-                if(!isLoading){
+                if (!isLoading) {
                     isLoading = true
                     viewModel.startPaging()
                 }
@@ -92,12 +93,11 @@ class UsersFragment : Fragment() {
     private fun handleLoadingState(isLoading: Boolean) = _binding.apply {
         this@UsersFragment.isLoading = isLoading
 
-        if(isLoading){
-            if(userAdapter.itemCount == 0){
+        if (isLoading) {
+            if (userAdapter.itemCount == 0) {
                 pbLoading.isVisible = isLoading
                 recyclerview.isVisible = !isLoading
-            }
-            else {
+            } else {
                 loadingBottom.parentLayout.isVisible = isLoading
             }
             return@apply
@@ -111,4 +111,10 @@ class UsersFragment : Fragment() {
         if (userAdapter.itemCount == 0)
             viewModel.fetchUsers(FIRST_PAGE)
     }
+
+    private fun onItemClick() : (GithubUser) -> Unit = {
+        requireActivity().navigateTo(usersToProfile(it))
+    }
+
+    private fun onScrollUpdateData() : (Int) -> Unit = { viewModel.updateUsersData(it) }
 }

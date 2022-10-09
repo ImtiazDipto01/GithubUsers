@@ -1,7 +1,11 @@
 package com.imtiaz.githubuserstest.data.local.preference
 
 interface PreferenceHelper {
-    fun saveUserName(name: String)
+    fun saveCompletedSinceId(since: Int)
 
-    fun getUserName(key: String): String?
+    fun getSavedSinceList() : List<Int>
+
+    fun clearList()
+
+    fun isSinceContain(since: Int): Boolean
 }

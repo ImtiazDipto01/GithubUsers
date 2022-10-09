@@ -9,7 +9,12 @@ import com.imtiaz.githubuserstest.core.extensions.loadImage
 import com.imtiaz.githubuserstest.databinding.ItemUsersBinding
 import com.imtiaz.githubuserstest.data.local.db.entity.GithubUser
 
-class UsersAdapter(private val onItemClick:(GithubUser) -> Unit) : RecyclerView.Adapter<UsersAdapter.MyViewHolder>() {
+class UsersAdapter(
+    private val onItemClick: (GithubUser) -> Unit,
+    private val onScrollUpdateData: (Int) -> Unit
+) : RecyclerView.Adapter<UsersAdapter.MyViewHolder>() {
+
+    private var lastUpdatedSinceId = -1
 
     private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<GithubUser>() {
         override fun areItemsTheSame(oldItem: GithubUser, newItem: GithubUser): Boolean {
@@ -53,8 +58,12 @@ class UsersAdapter(private val onItemClick:(GithubUser) -> Unit) : RecyclerView.
 
         fun bind(user: GithubUser) {
             _binding.apply {
-                textUserName.text = user.login ?: ""
+                textUserName.text = user.login
                 imgUser.loadImage(user.avatarUrl)
+            }
+            if(lastUpdatedSinceId != user.since){
+                lastUpdatedSinceId = user.since
+                onScrollUpdateData(user.since)
             }
         }
     }

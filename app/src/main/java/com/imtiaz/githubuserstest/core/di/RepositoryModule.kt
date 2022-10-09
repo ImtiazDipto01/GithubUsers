@@ -2,6 +2,7 @@ package com.imtiaz.githubuserstest.core.di
 
 import com.imtiaz.githubuserstest.data.local.db.dao.PageDao
 import com.imtiaz.githubuserstest.data.local.db.dao.UserDao
+import com.imtiaz.githubuserstest.data.local.preference.PreferenceHelper
 import com.imtiaz.githubuserstest.data.mapper.GithubUserMapper
 import com.imtiaz.githubuserstest.data.mapper.ProfileMapper
 import com.imtiaz.githubuserstest.data.remote.dto.UserProfileResponse
@@ -29,8 +30,9 @@ object RepositoryModule {
         service: ApiService,
         mapper: GithubUserMapper,
         userDao: UserDao,
-        pageDao: PageDao
-    ): UsersRepository = UsersRepositoryImp(service, mapper, userDao, pageDao)
+        pageDao: PageDao,
+        pref: PreferenceHelper
+    ): UsersRepository = UsersRepositoryImp(service, mapper, userDao, pageDao, pref)
 
     @Provides
     @Singleton
