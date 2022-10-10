@@ -20,6 +20,7 @@ import com.imtiaz.githubuserstest.presentation.main.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.launchIn
+import java.io.IOException
 
 @AndroidEntryPoint
 class UsersFragment : Fragment() {
@@ -46,9 +47,9 @@ class UsersFragment : Fragment() {
         initUi()
         initRecyclerView()
 
+        collectUsersFromDb()
         observeFetchUsers()
         observeNetworkState()
-        collectUsersFromDb()
     }
 
     private fun initUi() = _binding.apply {
@@ -76,6 +77,7 @@ class UsersFragment : Fragment() {
                     is State.Success -> handleLoadingState(false)
                     is State.Error -> {
                         handleLoadingState(false)
+                        handleError(it.err)
                     }
                     else -> Unit
                 }
@@ -100,24 +102,64 @@ class UsersFragment : Fragment() {
     private fun handleLoadingState(isLoading: Boolean) = _binding.apply {
         this@UsersFragment.isLoading = isLoading
 
+        // Hiding all Error view
+        layoutError.parentLayout.isVisible = false
+        layoutBottom.parentLayout.isVisible = false
+
         if (isLoading) {
             if (userAdapter.itemCount == 0) {
+                // showing Initial Loader
                 pbLoading.isVisible = isLoading
                 recyclerview.isVisible = !isLoading
             } else {
-                loadingBottom.parentLayout.isVisible = isLoading
+                layoutBottom.apply {
+                    // showing Paging Loader
+                    parentLayout.isVisible = isLoading
+                    pbLoading.isVisible = isLoading
+                    textErrorMsg.isVisible = false
+                }
             }
             return@apply
         }
+        // Hiding Loader, Showing recyclerview because of [isLoading = false]
         pbLoading.isVisible = isLoading
-        loadingBottom.parentLayout.isVisible = isLoading
+        layoutBottom.parentLayout.isVisible = isLoading
         recyclerview.isVisible = !isLoading
+        viewModel.errorHandler = null
+    }
+
+    private fun handleError(err: ErrorHandler) = _binding.apply {
+        viewModel.errorHandler = err
+        if (userAdapter.itemCount == 0) {
+            // showing error view center of view
+            layoutError.parentLayout.isVisible = true
+            layoutError.textErrorMsg.text = err.msg
+            return@apply
+        }
+        layoutBottom.apply {
+            // showing error bottom of the view
+            parentLayout.isVisible = true
+            pbLoading.isVisible = false
+            textErrorMsg.isVisible = true
+            textErrorMsg.text = err.msg
+        }
     }
 
     private fun observeNetworkState() {
         lifecycleScope.launchWhenStarted {
-            mainViewModel.networkStateFlow.collect {
+            mainViewModel.networkStateFlow.collect { isNetworkAvailable ->
+                val hasError = viewModel.errorHandler != null
 
+                if (isNetworkAvailable && hasError) {
+                    val isIOException = viewModel.errorHandler?.exception is IOException
+                    val hasNoDataAvailable = userAdapter.itemCount == 0
+
+                    if (isIOException && hasNoDataAvailable) {
+                        viewModel.fetchUsers(FIRST_PAGE)
+                        return@collect
+                    }
+                    else if(isIOException) viewModel.startPaging()
+                }
             }
         }
     }
@@ -127,9 +169,9 @@ class UsersFragment : Fragment() {
             viewModel.fetchUsers(FIRST_PAGE)
     }
 
-    private fun onItemClick() : (GithubUser) -> Unit = {
+    private fun onItemClick(): (GithubUser) -> Unit = {
         requireActivity().navigateTo(usersToProfile(it))
     }
 
-    private fun onScrollUpdateData() : (Int) -> Unit = { viewModel.updateUsersData(it) }
+    private fun onScrollUpdateData(): (Int) -> Unit = { viewModel.updateUsersData(it) }
 }

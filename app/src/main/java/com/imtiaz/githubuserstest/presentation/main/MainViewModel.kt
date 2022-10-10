@@ -12,22 +12,13 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor() : ViewModel() {
 
-    var networkState = NetworkState.EMPTY
-
     private val _networkStateFlow = MutableSharedFlow<Boolean>(replay = 0)
     val networkStateFlow: SharedFlow<Boolean> = _networkStateFlow
 
     fun notifyNetworkState(isConnected: Boolean) {
         viewModelScope.launch {
-            if(networkState == NetworkState.LOST && isConnected){
-                _networkStateFlow.emit(true)
-            }
-            networkState = if(isConnected) NetworkState.AVAILABLE
-            else NetworkState.LOST
+            _networkStateFlow.emit(isConnected)
         }
     }
 
-    enum class NetworkState {
-        AVAILABLE, LOST, EMPTY
-    }
 }

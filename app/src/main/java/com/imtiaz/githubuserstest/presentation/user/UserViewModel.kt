@@ -3,6 +3,7 @@ package com.imtiaz.githubuserstest.presentation.user
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.imtiaz.githubuserstest.core.extensions.ErrorHandler
 import com.imtiaz.githubuserstest.core.extensions.State
 import com.imtiaz.githubuserstest.data.local.db.entity.GithubUser
 import com.imtiaz.githubuserstest.data.local.preference.PreferenceHelper
@@ -28,15 +29,17 @@ class UserViewModel @Inject constructor(
         MutableStateFlow(State.Empty())
     val fetchUsersFlow = _fetchUsersStateFlow.asStateFlow()
 
+    var errorHandler: ErrorHandler? = null
+
     init {
         pref.clearList()
     }
 
     fun fetchUsers(since: Int) {
         viewModelScope.launch {
-            /*fetchUsersUseCase.execute(since).collect {
+            fetchUsersUseCase.execute(since).collect {
                 _fetchUsersStateFlow.value = it
-            }*/
+            }
         }
     }
 
@@ -54,7 +57,7 @@ class UserViewModel @Inject constructor(
 
     private fun updateUsers(since: Int) =
         viewModelScope.launch {
-            //updateUsersUseCase.execute(since)
+            updateUsersUseCase.execute(since)
         }
 
     fun getUsers(): Flow<List<GithubUser>> = getUsersUseCase.execute()
