@@ -34,9 +34,9 @@ class UserViewModel @Inject constructor(
 
     fun fetchUsers(since: Int) {
         viewModelScope.launch {
-            fetchUsersUseCase.execute(since).collect {
+            /*fetchUsersUseCase.execute(since).collect {
                 _fetchUsersStateFlow.value = it
-            }
+            }*/
         }
     }
 
@@ -54,7 +54,7 @@ class UserViewModel @Inject constructor(
 
     private fun updateUsers(since: Int) =
         viewModelScope.launch {
-            updateUsersUseCase.execute(since)
+            //updateUsersUseCase.execute(since)
         }
 
     fun getUsers(): Flow<List<GithubUser>> = getUsersUseCase.execute()

@@ -4,6 +4,7 @@
     package="com.imtiaz.githubuserstest">
 
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE"/>
 
     <application
         android:name="com.imtiaz.githubuserstest.App"
@@ -16,7 +17,7 @@
         android:theme="@style/Theme.AndroidSimpleBoilerplates"
         tools:targetApi="31">
         <activity
-            android:name="com.imtiaz.githubuserstest.presentation.MainActivity"
+            android:name="com.imtiaz.githubuserstest.presentation.main.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
