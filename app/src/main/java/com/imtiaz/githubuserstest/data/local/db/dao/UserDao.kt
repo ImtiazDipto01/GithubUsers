@@ -23,6 +23,9 @@ interface UserDao {
     @Query("delete from user")
     suspend fun deleteUsers()
 
+    @Query("select * from user where login like :searchText or note like :searchText order by id asc")
+    suspend fun searchUsersByLoginOrNote(searchText: String): List<GithubUser>
+
     @Query("select * from user order by id asc")
     fun getUsers(): Flow<List<GithubUser>>
 }

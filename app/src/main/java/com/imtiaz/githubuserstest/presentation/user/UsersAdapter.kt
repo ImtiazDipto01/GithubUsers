@@ -48,6 +48,8 @@ class UsersAdapter(
 
     fun submitList(list: List<GithubUser>) = differ.submitList(list)
 
+    fun clearList() = differ.submitList(null)
+
     inner class MyViewHolder(binding: ItemUsersBinding) : RecyclerView.ViewHolder(binding.root) {
         private val _binding: ItemUsersBinding = binding
 

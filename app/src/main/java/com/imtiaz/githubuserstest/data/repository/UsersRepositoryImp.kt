@@ -11,10 +11,12 @@ import com.imtiaz.githubuserstest.data.local.db.entity.Page
 import com.imtiaz.githubuserstest.data.local.preference.PreferenceHelper
 import com.imtiaz.githubuserstest.data.remote.dto.GithubUserResponse
 import com.imtiaz.githubuserstest.domain.repository.UsersRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.transform
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import kotlin.math.sin
 
@@ -58,6 +60,9 @@ class UsersRepositoryImp @Inject constructor(
         }
         return resultFlow
     }
+
+    override suspend fun searchUsersByLoginOrNote(searchText: String): List<GithubUser> =
+        userDao.searchUsersByLoginOrNote(searchText)
 
     override suspend fun updateUsers(users: List<GithubUser>) = userDao.updateUsers(users)
 

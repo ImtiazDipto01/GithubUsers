@@ -14,5 +14,7 @@ interface UsersRepository {
 
     suspend fun updateUsers(users: List<GithubUser>)
 
+    suspend fun searchUsersByLoginOrNote(searchText: String): List<GithubUser>
+
     fun getUsers(): Flow<List<GithubUser>>
 }

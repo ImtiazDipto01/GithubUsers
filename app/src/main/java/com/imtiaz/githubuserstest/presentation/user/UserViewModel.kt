@@ -7,13 +7,12 @@ import com.imtiaz.githubuserstest.core.extensions.ErrorHandler
 import com.imtiaz.githubuserstest.core.extensions.State
 import com.imtiaz.githubuserstest.data.local.db.entity.GithubUser
 import com.imtiaz.githubuserstest.data.local.preference.PreferenceHelper
-import com.imtiaz.githubuserstest.domain.usecase.FetchUsersUseCase
-import com.imtiaz.githubuserstest.domain.usecase.GetUsersUseCase
-import com.imtiaz.githubuserstest.domain.usecase.GetPageUseCase
-import com.imtiaz.githubuserstest.domain.usecase.UpdateUsersUseCase
+import com.imtiaz.githubuserstest.domain.usecase.*
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -21,6 +20,7 @@ class UserViewModel @Inject constructor(
     private val getUsersUseCase: GetUsersUseCase,
     private val fetchUsersUseCase: FetchUsersUseCase,
     private val updateUsersUseCase: UpdateUsersUseCase,
+    private val searchUsersUseCase: SearchUsersUseCase,
     private val getPageUserCase: GetPageUseCase,
     private val pref: PreferenceHelper
 ) : ViewModel() {
@@ -49,6 +49,9 @@ class UserViewModel @Inject constructor(
             fetchUsers(since)
         }
     }
+
+    suspend fun searchUsers(searchText: String): List<GithubUser> =
+        withContext(Dispatchers.IO) { searchUsersUseCase.execute(searchText) }
 
     fun updateUsersData(since: Int) {
         if (!pref.isSinceContain(since))

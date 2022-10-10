@@ -1,12 +1,15 @@
 package com.imtiaz.githubuserstest.presentation.user
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.isVisible
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -18,8 +21,12 @@ import com.imtiaz.githubuserstest.data.local.db.entity.GithubUser
 import com.imtiaz.githubuserstest.databinding.FragmentUsersBinding
 import com.imtiaz.githubuserstest.presentation.main.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.launch
 import java.io.IOException
 
 @AndroidEntryPoint
@@ -31,7 +38,10 @@ class UsersFragment : Fragment() {
     private lateinit var userAdapter: UsersAdapter
     private lateinit var _binding: FragmentUsersBinding
 
+    private val users: MutableList<GithubUser> by lazy { mutableListOf() }
+
     private var isLoading = false
+    private var searchJob: Job? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -52,18 +62,68 @@ class UsersFragment : Fragment() {
         observeNetworkState()
     }
 
+    /**
+     * Initialize Ui elements here
+     */
     private fun initUi() = _binding.apply {
         layoutAppBar.toolBar.setup(
             requireActivity(),
             title = getString(R.string.app_name),
             isNavIconEnable = false
         )
+        initSearchTextChangeListener()
+    }
+
+    /**
+     * Initializing search text listener and
+     * picking search related text when user typing on Search field
+     */
+    private fun initSearchTextChangeListener() = _binding.apply {
+        etSearch.addTextChangedListener(
+            onTextChanged = { text, _, _, _->
+                text?.let {
+                    searchClear.isVisible = it.toString().isNotEmpty()
+                    val text = it.toString().lowercase()
+                    delayAndStartSearch(text)
+                }
+            }
+        )
+    }
+
+    /**
+     * Before start searching delay the process a bit
+     * because of preventing search for continuous user typing.
+     * After that Start search by checking on Search Text length.
+     *
+     * @param text - contains search text
+     */
+    private fun delayAndStartSearch(text: String) {
+        searchJob?.cancel()
+        if(text.length > 1){
+            searchJob = lifecycleScope.launch(Dispatchers.Main) {
+                delay(200)
+
+                val result = viewModel.searchUsers("%$text%")
+                userAdapter.submitList(result)
+            }
+        }
+        if(text.isEmpty()) {
+            Log.e("isEmptyText", "True")
+            userAdapter.apply {
+                clearList()
+                submitList(users)
+            }
+        }
     }
 
     private fun collectUsersFromDb() {
         lifecycleScope.launchWhenStarted {
             viewModel.getUsers().collect {
-                userAdapter.submitList(it)
+                users.apply {
+                    clear()
+                    addAll(it)
+                    userAdapter.submitList(it)
+                }
                 checkIfNeedInitialFetch()
             }
         }
@@ -93,7 +153,8 @@ class UsersFragment : Fragment() {
 
             // paginating recyclerview
             PaginateRecyclerview(this, layoutManager) {
-                if (!isLoading) {
+                val isSearchFieldEmpty = etSearch.text.isEmpty()
+                if (!isLoading && isSearchFieldEmpty) {
                     isLoading = true
                     viewModel.startPaging()
                 }
