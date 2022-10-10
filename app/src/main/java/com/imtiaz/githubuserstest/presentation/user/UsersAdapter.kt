@@ -2,6 +2,7 @@ package com.imtiaz.githubuserstest.presentation.user
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -60,6 +61,7 @@ class UsersAdapter(
             _binding.apply {
                 textUserName.text = user.login
                 imgUser.loadImage(user.avatarUrl)
+                imgNote.isVisible = user.note != null
             }
             if(lastUpdatedSinceId != user.since){
                 lastUpdatedSinceId = user.since

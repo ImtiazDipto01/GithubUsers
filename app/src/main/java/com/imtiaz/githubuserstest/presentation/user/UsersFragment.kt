@@ -90,6 +90,8 @@ class UsersFragment : Fragment() {
             userAdapter = UsersAdapter(onItemClick(), onScrollUpdateData())
             layoutManager = LinearLayoutManager(context)
             adapter = userAdapter
+
+            // paginating recyclerview
             PaginateRecyclerview(this, layoutManager) {
                 if (!isLoading) {
                     isLoading = true
@@ -154,6 +156,7 @@ class UsersFragment : Fragment() {
                     val isIOException = viewModel.errorHandler?.exception is IOException
                     val hasNoDataAvailable = userAdapter.itemCount == 0
 
+                    // checking If we need to fetch first page otherwise fetch next page
                     if (isIOException && hasNoDataAvailable) {
                         viewModel.fetchUsers(FIRST_PAGE)
                         return@collect

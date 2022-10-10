@@ -13,7 +13,8 @@ class GithubUserMapper @Inject constructor(): EntityMapper<GithubUserResponse, G
             avatarUrl = entity.avatarUrl,
             nodeId = entity.nodeId,
             url = entity.url,
-            id = entity.id!!
+            id = entity.id!!,
+            note = "Hululu"
         )
     }
 
