@@ -13,3 +13,4 @@ abstract class EntityMapper<Entity, DomainModel> {
         dtoList.map { mapToEntity(it) }
 
 }
+
