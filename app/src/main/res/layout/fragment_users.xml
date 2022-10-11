@@ -16,7 +16,18 @@
         tools:context=".presentation.user.UsersFragment"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
-        <ProgressBar
+        <include
+            android:id="@+id/layout_skeleton"
+            layout="@layout/skeleton_users"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/layout_search"
+            android:layout_margin="4dp"
+            android:visibility="gone"/>
+
+        <!--<ProgressBar
             android:id="@+id/pbLoading"
             android:layout_width="50dp"
             android:layout_height="50dp"
@@ -24,7 +35,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent" />-->
 
         <View
             android:id="@+id/layout_search"
@@ -124,6 +135,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_margin="4dp"
             android:visibility="gone"/>
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

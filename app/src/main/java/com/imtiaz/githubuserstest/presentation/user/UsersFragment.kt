@@ -172,7 +172,7 @@ class UsersFragment : Fragment() {
         if (isLoading) {
             if (userAdapter.itemCount == 0) {
                 // showing Initial Loader
-                pbLoading.isVisible = isLoading
+                handleInitialLoading(isLoading)
                 recyclerview.isVisible = !isLoading
             } else {
                 layoutBottom.apply {
@@ -185,7 +185,7 @@ class UsersFragment : Fragment() {
             return@apply
         }
         // Hiding Loader, Showing recyclerview because of [isLoading = false]
-        pbLoading.isVisible = isLoading
+        handleInitialLoading(isLoading)
         layoutBottom.parentLayout.isVisible = isLoading
         recyclerview.isVisible = !isLoading
         viewModel.errorHandler = null
@@ -226,6 +226,13 @@ class UsersFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun handleInitialLoading(isLoading: Boolean) = _binding.apply {
+        layoutSkeleton.parentLayout.isVisible = isLoading
+        if(isLoading)
+            layoutSkeleton.shimmerViewContainer.startShimmer()
+        else layoutSkeleton.shimmerViewContainer.stopShimmer()
     }
 
     private fun checkIfNeedInitialFetch() {

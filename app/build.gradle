@@ -101,6 +101,9 @@ dependencies {
     implementation "com.jakewharton.timber:timber:$timberVersion"
     implementation "com.orhanobut:logger:$loggerVersion"
 
+    // shimmer
+    implementation "com.facebook.shimmer:shimmer:$shimmerVersion"
+
     // testing
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

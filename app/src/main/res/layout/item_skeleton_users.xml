@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="6dp"
+    app:cardElevation="3dp"
+    android:layout_margin="6dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="6dp">
+
+        <View
+            android:id="@+id/img_user_skltn"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:background="@drawable/sekeleton_user_img"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <TextView
+            android:id="@+id/text_user_name_skltn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@+id/img_user_skltn"
+            app:layout_constraintTop_toTopOf="parent"
+            android:textSize="14sp"
+            android:textColor="@android:color/transparent"
+            android:text="@string/demo_skln_msg"
+            android:background="@drawable/sekeleton_user_img"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"/>
+
+        <TextView
+            android:id="@+id/text_second_skltn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@+id/img_user_skltn"
+            app:layout_constraintTop_toBottomOf="@+id/text_user_name_skltn"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:textSize="14sp"
+            android:textColor="@android:color/transparent"
+            android:text="@string/demo_user_name"
+            android:background="@drawable/sekeleton_user_img"
+            android:layout_marginStart="10dp" />
+
+
+        <ImageView
+            android:id="@+id/img_note"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginEnd="15dp"
+            android:background="@drawable/sekeleton_user_img"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>
