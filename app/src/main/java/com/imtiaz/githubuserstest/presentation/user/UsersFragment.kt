@@ -72,6 +72,7 @@ class UsersFragment : Fragment() {
             isNavIconEnable = false
         )
         initSearchTextChangeListener()
+        searchClear.setOnClickListener { etSearch.setText("") }
     }
 
     /**
