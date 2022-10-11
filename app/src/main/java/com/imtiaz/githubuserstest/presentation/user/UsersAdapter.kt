@@ -1,5 +1,6 @@
 package com.imtiaz.githubuserstest.presentation.user
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
@@ -7,8 +8,13 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.imtiaz.githubuserstest.core.extensions.loadImage
-import com.imtiaz.githubuserstest.databinding.ItemUsersBinding
+import com.imtiaz.githubuserstest.core.extensions.loadImageAsBitmap
 import com.imtiaz.githubuserstest.data.local.db.entity.GithubUser
+import com.imtiaz.githubuserstest.databinding.ItemUsersBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+
 
 class UsersAdapter(
     private val onItemClick: (GithubUser) -> Unit,
@@ -42,7 +48,7 @@ class UsersAdapter(
         )
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) =
-        holder.bind(differ.currentList[position])
+        holder.bind(differ.currentList[position], position)
 
     override fun getItemCount(): Int = differ.currentList.size
 
@@ -59,16 +65,22 @@ class UsersAdapter(
             }
         }
 
-        fun bind(user: GithubUser) {
+        fun bind(user: GithubUser, position: Int) {
             _binding.apply {
                 textUserName.text = user.login
-                imgUser.loadImage(user.avatarUrl)
                 imgNote.isVisible = user.note != null
+
+                if ((position + 1) % 4 == 0) {
+                    CoroutineScope(Dispatchers.Main).launch {
+                        imgUser.loadImageAsBitmap(user.avatarUrl)
+                    }
+                } else imgUser.loadImage(user.avatarUrl)
             }
-            if(lastUpdatedSinceId != user.since){
+            if (lastUpdatedSinceId != user.since) {
                 lastUpdatedSinceId = user.since
                 onScrollUpdateData(user.since)
             }
         }
+
     }
 }
