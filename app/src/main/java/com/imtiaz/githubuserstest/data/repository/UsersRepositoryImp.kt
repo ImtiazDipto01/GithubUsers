@@ -1,7 +1,7 @@
 package com.imtiaz.githubuserstest.data.repository
 
-import com.imtiaz.githubuserstest.core.extensions.State
-import com.imtiaz.githubuserstest.core.extensions.safeApiCall
+import android.util.Log
+import com.imtiaz.githubuserstest.core.extensions.*
 import com.imtiaz.githubuserstest.data.local.db.dao.PageDao
 import com.imtiaz.githubuserstest.data.local.db.dao.UserDao
 import com.imtiaz.githubuserstest.data.mapper.GithubUserMapper
@@ -11,14 +11,8 @@ import com.imtiaz.githubuserstest.data.local.db.entity.Page
 import com.imtiaz.githubuserstest.data.local.preference.PreferenceHelper
 import com.imtiaz.githubuserstest.data.remote.dto.GithubUserResponse
 import com.imtiaz.githubuserstest.domain.repository.UsersRepository
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.transform
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
-import kotlin.math.sin
 
 class UsersRepositoryImp @Inject constructor(
     private val apiService: ApiService,
@@ -61,15 +55,42 @@ class UsersRepositoryImp @Inject constructor(
         return resultFlow
     }
 
-    override suspend fun searchUsersByLoginOrNote(searchText: String): List<GithubUser> =
+    override suspend fun searchUsersByLoginOrNote(searchText: String): List<GithubUser> = try {
         userDao.searchUsersByLoginOrNote(searchText)
+    } catch (e: Exception) {
+        Log.e(SEARCH_EXP, e.toString())
+        listOf<GithubUser>()
+    }
 
-    override suspend fun updateUsers(users: List<GithubUser>) = userDao.updateUsers(users)
+    override suspend fun updateUsers(users: List<GithubUser>) {
+        try {
+            userDao.updateUsers(users)
+        } catch (e: Exception) {
+            Log.e(UPDATE_EXP, e.toString())
+        }
+    }
 
-    override suspend fun insertUsers(users: List<GithubUser>) = userDao.insertUsers(users)
+    override suspend fun insertUsers(users: List<GithubUser>) {
+        try {
+            userDao.insertUsers(users)
+        } catch (e: Exception) {
+            Log.e(INSERT_EXP, e.toString())
+        }
+    }
 
-    override fun getUsers(): Flow<List<GithubUser>> = userDao.getUsers()
+    override fun getUsers(): Flow<List<GithubUser>> = try {
+        userDao.getUsers()
+    } catch (e: Exception){
+        Log.e(GET_USER_EXP, e.toString())
+        flow { listOf<GithubUser>() }
+    }
 
-    private suspend fun updateLastUserId(id: Int) = pageDao.insert(Page(since = id))
+    private suspend fun updateLastUserId(id: Int) {
+        try {
+            pageDao.insert(Page(since = id))
+        } catch (e: Exception) {
+            Log.e(PAGE_EXP, e.toString())
+        }
+    }
 
 }
