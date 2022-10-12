@@ -6,6 +6,6 @@ data class ErrorHandler(
 
     @SerializedName("message")
     val msg: String,
-
-    val exception: java.lang.Exception? = null
+    val exception: java.lang.Exception? = null,
+    val code: Int = -1
 )

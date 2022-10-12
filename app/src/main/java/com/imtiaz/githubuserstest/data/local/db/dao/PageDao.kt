@@ -11,7 +11,7 @@ import com.imtiaz.githubuserstest.data.local.db.entity.Page
 interface PageDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(user: Page)
+    suspend fun insert(updatedPage: Page)
 
     @Query("select since from page where `key` = :pageKey")
     suspend fun getSince(pageKey: String = PAGE_KEY): Int

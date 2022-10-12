@@ -27,6 +27,7 @@ buildscript {
         espresso_core = "3.1.1"
         espresso_idling_resource = "3.2.0"
         mockkVersion = "1.9.2"
+        mockWebServer = "4.10.0"
         junitVersion = "4.13.2"
         junitJupiterVersion = "5.6.0"
         test_runner = "1.2.0"

@@ -37,7 +37,7 @@ fun <T> handleApiResponse(response: Response<T>): Any? {
         }
     } catch (exp: Exception) {
         exp.printStackTrace()
-        ErrorHandler("Something Went Wrong!")
+        ErrorHandler("Something Went Wrong!", JSONException(exp.message), response.code())
     }
 }
 

@@ -63,3 +63,7 @@ val successfullResponse = "[\n" +
         "      \"site_admin\":false\n" +
         "   }\n" +
         "]"
+
+val badApiResponse =  "{\"response\":\"Bad Response\"}"
+
+//fun usersList =
