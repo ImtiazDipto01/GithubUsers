@@ -10,6 +10,7 @@ import com.imtiaz.githubuserstest.data.remote.dto.GithubUserResponse
 import com.imtiaz.githubuserstest.data.remote.service.ApiService
 import com.imtiaz.githubuserstest.data.repository.FakeUsersRepositoryImp
 import com.imtiaz.githubuserstest.data.util.FETCH_AND_INSERT_USERS_SUCCESS
+import com.imtiaz.githubuserstest.data.util.FETCH_AND_UPDATE_FAIL
 import com.imtiaz.githubuserstest.data.util.FETCH_AND_UPDATE_USERS
 import com.imtiaz.githubuserstest.data.util.TestUtil.testTag
 import com.imtiaz.githubuserstest.data.util.getUpdatedUsersResponse
@@ -87,6 +88,28 @@ class UpdateUsersUseCaseTest {
                 for(updatedUser in updatedUsersAfterMap) {
                     Assertions.assertTrue { value.contains(updatedUser) }
                 }
+            }
+        })
+    }
+
+    @Test
+    fun `fetch updated users and confirm failed to update in db`() = runBlocking {
+        testTag = FETCH_AND_UPDATE_FAIL
+
+        val updatedUsersFromApi = getUpdatedUsersResponse()
+        val updatedUsersAfterMap = GithubUserMapper().mapFromEntityList(updatedUsersFromApi)
+
+        updateUsersUseCase.execute(0).collect(object : FlowCollector<State<List<GithubUserResponse>>> {
+            override suspend fun emit(value: State<List<GithubUserResponse>>) {
+                Assertions.assertTrue { (value as State.Success).data.size == 3 }
+                Assertions.assertEquals((value as State.Success).data, updatedUsersFromApi)
+            }
+        })
+
+        repository.getUsers().collect(object : FlowCollector<List<GithubUser>> {
+            override suspend fun emit(value: List<GithubUser>) {
+                Assertions.assertTrue { value[0] != updatedUsersAfterMap[0] }
+                Assertions.assertTrue { value[1] != updatedUsersAfterMap[1] }
             }
         })
     }

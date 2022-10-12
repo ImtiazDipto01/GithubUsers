@@ -37,7 +37,7 @@ class FakeUsersRepositoryImp(
     override suspend fun updateUsers(since: Int): Flow<State<List<GithubUserResponse>>> {
         return when (testTag) {
             FETCH_AND_UPDATE_USERS -> successfulFetchAndUpdateUsers(since)
-            /*FETCH_AND_UPDATE_FAIL -> successfulFetchAndInsertFailed(since)*/
+            FETCH_AND_UPDATE_FAIL -> successfulFetchAndFailedToUpdate(since)
             else -> successfulFetchAndUpdateUsers(since)
         }
     }
@@ -105,6 +105,22 @@ class FakeUsersRepositoryImp(
     }
 
     private suspend fun successfulFetchAndUpdateUsers(since: Int): Flow<State<List<GithubUserResponse>>> {
+
+        val expectedResponse = MockResponse()
+            .setResponseCode(HttpURLConnection.HTTP_OK)
+            .setBody(updatedUsersResponse)
+        mockServer.enqueue(expectedResponse)
+
+        val actualResponse = service.fetchUsers(since)
+        val result = handleApiResponse(actualResponse)
+
+        val users = mapper.mapFromEntityList(result as List<GithubUserResponse>, since)
+
+        updateUsers(users)
+        return flow { emit(State.Success(result)) }
+    }
+
+    private suspend fun successfulFetchAndFailedToUpdate(since: Int): Flow<State<List<GithubUserResponse>>> {
 
         val expectedResponse = MockResponse()
             .setResponseCode(HttpURLConnection.HTTP_OK)
