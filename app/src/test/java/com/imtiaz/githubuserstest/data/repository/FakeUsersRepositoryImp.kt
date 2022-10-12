@@ -15,7 +15,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
-import org.json.JSONException
 import java.lang.Exception
 import java.net.HttpURLConnection
 
@@ -29,6 +28,7 @@ class FakeUsersRepositoryImp(
     override suspend fun fetchUsers(since: Int): Flow<State<List<GithubUser>>> {
         return when (testTag) {
             FETCH_AND_INSERT_USERS_SUCCESS -> successfulFetchAndInsert(since)
+            INSERT_FAIL -> successfulFetchAndInsertFailed(since)
             HTTP_ERROR -> badResponse(since)
             else -> successfulFetchAndInsert(since)
         }
@@ -47,12 +47,28 @@ class FakeUsersRepositoryImp(
     }
 
     override suspend fun searchUsersByLoginOrNote(searchText: String): List<GithubUser> {
-        TODO("Not yet implemented")
+        return userDao.searchUsersByLoginOrNote(searchText)
     }
 
     override fun getUsers(): Flow<List<GithubUser>> = userDao.getUsers()
 
     private suspend fun successfulFetchAndInsert(since: Int): Flow<State<List<GithubUser>>> {
+
+        val expectedResponse = MockResponse()
+            .setResponseCode(HttpURLConnection.HTTP_OK)
+            .setBody(successfullResponse)
+        mockServer.enqueue(expectedResponse)
+
+        val actualResponse = service.fetchUsers(since)
+        val result = handleApiResponse(actualResponse)
+
+        val users = mapper.mapFromEntityList(result as List<GithubUserResponse>, since)
+
+        insertUsers(users)
+        return flow { emit(State.Success(users)) }
+    }
+
+    private suspend fun successfulFetchAndInsertFailed(since: Int): Flow<State<List<GithubUser>>> {
 
         val expectedResponse = MockResponse()
             .setResponseCode(HttpURLConnection.HTTP_OK)
@@ -75,11 +91,13 @@ class FakeUsersRepositoryImp(
 
         val actualResponse = service.fetchUsers(since)
 
-        return flow { emit(
+        return flow {
+            emit(
                 State.Error(
                     ErrorHandler("Http Error", Exception("Http Error"), actualResponse.code())
                 )
-            )}
+            )
+        }
     }
 
 }

@@ -10,16 +10,20 @@ import com.imtiaz.githubuserstest.data.remote.service.ApiService
 import com.imtiaz.githubuserstest.data.repository.FakeUsersRepositoryImp
 import com.imtiaz.githubuserstest.data.util.FETCH_AND_INSERT_USERS_SUCCESS
 import com.imtiaz.githubuserstest.data.util.HTTP_ERROR
+import com.imtiaz.githubuserstest.data.util.INSERT_FAIL
 import com.imtiaz.githubuserstest.data.util.TestUtil.testTag
 import com.imtiaz.githubuserstest.domain.repository.UsersRepository
 import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.runBlocking
 import okhttp3.mockwebserver.MockWebServer
 import org.json.JSONException
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.net.HttpURLConnection
@@ -36,6 +40,12 @@ import java.net.HttpURLConnection
  *      - no insertion in db
  *      - confirm Bad response with error state
  *      - confirm no data inserted
+ *
+ * 3. successful users fetch but Insert failed
+ *      - Fetch a successful response
+ *      - Failed to insert in db
+ *      - confirm successful fetch
+ *      - confirm failed to insert
  *
  *
  * @constructor Create empty Fetch users use case test
@@ -89,8 +99,7 @@ class FetchUsersUseCaseTest {
     }
 
     @Test
-    fun `hit a http error and confirm fetch is unsuccessful and no insert happen`() =
-
+    fun `hit a http error and confirm fetch is unsuccessful and no insert happen`() {
         runBlocking {
             testTag = HTTP_ERROR
 
@@ -106,4 +115,33 @@ class FetchUsersUseCaseTest {
                 }
             })
         }
+    }
+
+    @Test
+    fun `fetch users successfully fetched but inserting users failed`() {
+        runBlocking {
+            testTag = INSERT_FAIL
+
+            val userlist = mutableListOf<GithubUser>()
+
+            fetchUsersUseCase.execute(0).collect(object : FlowCollector<State<List<GithubUser>>> {
+                override suspend fun emit(value: State<List<GithubUser>>) {
+                    assertTrue { (value as State.Success).data.isNotEmpty() }
+                    assertTrue { (value as State.Success).data.size == 3 }
+                    userlist.addAll((value as State.Success).data)
+                }
+            })
+
+            delay(200)
+
+            repository.getUsers().collect(object : FlowCollector<List<GithubUser>> {
+                override suspend fun emit(value: List<GithubUser>) {
+                    assertTrue { value.size != userlist.size }
+                }
+            })
+
+            val searchedUsers = repository.searchUsersByLoginOrNote(userlist[2].login)
+            assertTrue { searchedUsers.isEmpty() }
+        }
+    }
 }

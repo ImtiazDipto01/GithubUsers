@@ -2,11 +2,13 @@ package com.imtiaz.githubuserstest.data.local.dao
 
 import com.imtiaz.githubuserstest.data.local.db.dao.UserDao
 import com.imtiaz.githubuserstest.data.local.db.entity.GithubUser
+import com.imtiaz.githubuserstest.data.util.INSERT_FAIL
+import com.imtiaz.githubuserstest.data.util.TestUtil.testTag
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class FakeUserDaoImp(
-    val usersList: MutableList<GithubUser> = mutableListOf()
+    val users: MutableList<GithubUser> = mutableListOf()
 ) : UserDao {
 
     override suspend fun insert(user: GithubUser) {
@@ -14,7 +16,8 @@ class FakeUserDaoImp(
     }
 
     override suspend fun insertUsers(user: List<GithubUser>) {
-        usersList.addAll(user)
+        if(testTag == INSERT_FAIL) return
+        else users.addAll(user)
     }
 
     override suspend fun updateUsers(user: List<GithubUser>) {
@@ -26,8 +29,14 @@ class FakeUserDaoImp(
     }
 
     override suspend fun searchUsersByLoginOrNote(searchText: String): List<GithubUser> {
-        TODO("Not yet implemented")
+        val list = mutableListOf<GithubUser>()
+        for (user in users) {
+            if(user.login.contains(searchText) || user.note?.contains(searchText) == true){
+                list.add(user)
+            }
+        }
+        return list
     }
 
-    override fun getUsers(): Flow<List<GithubUser>> = flow { emit(usersList) }
+    override fun getUsers(): Flow<List<GithubUser>> = flow { emit(users) }
 }
