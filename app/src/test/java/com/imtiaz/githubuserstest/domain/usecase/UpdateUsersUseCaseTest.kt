@@ -33,6 +33,12 @@ import retrofit2.converter.gson.GsonConverterFactory
  *      - confirm fetch updated users success
  *      - confirm user info updating in db success
  *
+ * 2. Successfully fetched & data updating failed
+ *      - fetch and parse updated user response
+ *      - updating users info failed
+ *      - confirm fetch updated users success
+ *      - confirm user info updating in db failed
+ *
  * @constructor Create empty Update users use case test
  */
 @OptIn(InternalCoroutinesApi::class)
@@ -76,16 +82,17 @@ class UpdateUsersUseCaseTest {
         val updatedUsersFromApi = getUpdatedUsersResponse()
         val updatedUsersAfterMap = GithubUserMapper().mapFromEntityList(updatedUsersFromApi)
 
-        updateUsersUseCase.execute(0).collect(object : FlowCollector<State<List<GithubUserResponse>>> {
-            override suspend fun emit(value: State<List<GithubUserResponse>>) {
-                Assertions.assertTrue { (value as State.Success).data.size == 3 }
-                Assertions.assertEquals((value as State.Success).data, updatedUsersFromApi)
-            }
-        })
+        updateUsersUseCase.execute(0)
+            .collect(object : FlowCollector<State<List<GithubUserResponse>>> {
+                override suspend fun emit(value: State<List<GithubUserResponse>>) {
+                    Assertions.assertTrue { (value as State.Success).data.size == 3 }
+                    Assertions.assertEquals((value as State.Success).data, updatedUsersFromApi)
+                }
+            })
 
         repository.getUsers().collect(object : FlowCollector<List<GithubUser>> {
             override suspend fun emit(value: List<GithubUser>) {
-                for(updatedUser in updatedUsersAfterMap) {
+                for (updatedUser in updatedUsersAfterMap) {
                     Assertions.assertTrue { value.contains(updatedUser) }
                 }
             }
@@ -99,12 +106,13 @@ class UpdateUsersUseCaseTest {
         val updatedUsersFromApi = getUpdatedUsersResponse()
         val updatedUsersAfterMap = GithubUserMapper().mapFromEntityList(updatedUsersFromApi)
 
-        updateUsersUseCase.execute(0).collect(object : FlowCollector<State<List<GithubUserResponse>>> {
-            override suspend fun emit(value: State<List<GithubUserResponse>>) {
-                Assertions.assertTrue { (value as State.Success).data.size == 3 }
-                Assertions.assertEquals((value as State.Success).data, updatedUsersFromApi)
-            }
-        })
+        updateUsersUseCase.execute(0)
+            .collect(object : FlowCollector<State<List<GithubUserResponse>>> {
+                override suspend fun emit(value: State<List<GithubUserResponse>>) {
+                    Assertions.assertTrue { (value as State.Success).data.size == 3 }
+                    Assertions.assertEquals((value as State.Success).data, updatedUsersFromApi)
+                }
+            })
 
         repository.getUsers().collect(object : FlowCollector<List<GithubUser>> {
             override suspend fun emit(value: List<GithubUser>) {
