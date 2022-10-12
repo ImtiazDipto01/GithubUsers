@@ -138,3 +138,8 @@ fun getUpdatedUsersResponse(): List<GithubUserResponse> {
     val type = object : TypeToken<List<GithubUserResponse>>() {}.type
     return Gson().fromJson(updatedUsersResponse, type) ?: listOf<GithubUserResponse>()
 }
+
+fun getInitialUserResponse(): List<GithubUserResponse> {
+    val type = object : TypeToken<List<GithubUserResponse>>() {}.type
+    return Gson().fromJson(successfullResponse, type) ?: listOf<GithubUserResponse>()
+}

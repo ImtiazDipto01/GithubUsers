@@ -4,6 +4,7 @@ import com.imtiaz.githubuserstest.data.local.db.dao.UserDao
 import com.imtiaz.githubuserstest.data.local.db.entity.GithubUser
 import com.imtiaz.githubuserstest.data.util.FETCH_AND_UPDATE_FAIL
 import com.imtiaz.githubuserstest.data.util.INSERT_FAIL
+import com.imtiaz.githubuserstest.data.util.SEARCH_FAIL
 import com.imtiaz.githubuserstest.data.util.TestUtil.testTag
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -42,6 +43,9 @@ class FakeUserDaoImp(
 
     override suspend fun searchUsersByLoginOrNote(searchText: String): List<GithubUser> {
         val list = mutableListOf<GithubUser>()
+
+        if(testTag == SEARCH_FAIL) return list
+
         for (user in users) {
             if(user.login.contains(searchText) || user.note?.contains(searchText) == true){
                 list.add(user)
