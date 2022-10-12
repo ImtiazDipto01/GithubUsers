@@ -28,7 +28,7 @@ import java.net.HttpURLConnection
 /**
  * 1.Successful fetch user and Successful Insert
  *      - fetch and parse user response
- *      - insert note
+ *      - insert user
  *      - confirm fetch user success
  *      - confirm insert user success
  *

@@ -2,6 +2,7 @@ package com.imtiaz.githubuserstest.data.local.dao
 
 import com.imtiaz.githubuserstest.data.local.db.dao.UserDao
 import com.imtiaz.githubuserstest.data.local.db.entity.GithubUser
+import com.imtiaz.githubuserstest.data.util.FETCH_AND_UPDATE_FAIL
 import com.imtiaz.githubuserstest.data.util.INSERT_FAIL
 import com.imtiaz.githubuserstest.data.util.TestUtil.testTag
 import kotlinx.coroutines.flow.Flow
@@ -20,8 +21,19 @@ class FakeUserDaoImp(
         else users.addAll(user)
     }
 
-    override suspend fun updateUsers(user: List<GithubUser>) {
-        TODO("Not yet implemented")
+    override suspend fun updateUsers(updatedUsers: List<GithubUser>) {
+        if(testTag == FETCH_AND_UPDATE_FAIL) return
+
+        for(updatedUser in updatedUsers) {
+            val isUserAlreadyExist = users.any { it.login == updatedUser.login }
+            val currUser = users.find { it.login == updatedUser.login }
+            if(isUserAlreadyExist && currUser != null && currUser != updatedUser){
+                val index = users.indexOf(currUser)
+                users[index] = updatedUser
+            }
+            else if(!isUserAlreadyExist)
+                users.add(updatedUser)
+        }
     }
 
     override suspend fun deleteUsers() {
