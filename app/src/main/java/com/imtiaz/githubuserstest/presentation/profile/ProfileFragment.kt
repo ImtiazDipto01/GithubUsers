@@ -9,7 +9,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.imtiaz.githubuserstest.R
-import com.imtiaz.githubuserstest.core.extensions.State
+import com.imtiaz.githubuserstest.core.extensions.BaseState
 import com.imtiaz.githubuserstest.core.extensions.loadImage
 import com.imtiaz.githubuserstest.core.extensions.setup
 import com.imtiaz.githubuserstest.databinding.FragmentProfileBinding
@@ -42,23 +42,23 @@ class ProfileFragment : Fragment() {
     }
 
     private fun collectProfileInfo() {
-        lifecycleScope.launchWhenStarted {
+        /*lifecycleScope.launchWhenStarted {
             viewModel.profileFlow.collect {
                 when (it) {
-                    is State.Loading -> {
+                    is BaseState.Loading -> {
                         //_binding.pbLoading.isVisible = true
                     }
-                    is State.Success -> {
+                    is BaseState.Success -> {
                         Timber.e("ProfileFragment: ${it.data}")
                         updateProfileInfo(it.data)
                     }
-                    is State.Error -> {
+                    is BaseState.Error -> {
                         //_binding.pbLoading.isVisible = false
                     }
                     else -> Unit
                 }
             }
-        }
+        }*/
     }
 
     private fun initUi() {

@@ -22,10 +22,10 @@ class UsersRepositoryImp @Inject constructor(
     private val pref: PreferenceHelper
 ) : UsersRepository {
 
-    override suspend fun fetchUsers(since: Int): Flow<State<List<GithubUser>>> = safeApiCall {
+    override suspend fun fetchUsers(since: Int): Flow<BaseState<List<GithubUser>>> = safeApiCall {
         apiService.fetchUsers(since)
     }.transform {
-        if (it is State.Success) {
+        if (it is BaseState.Success) {
             val users = mapper.mapFromEntityList(it.data, since)
 
             // updating successfully fetched Since Id
@@ -36,14 +36,14 @@ class UsersRepositoryImp @Inject constructor(
                 updateLastUserId(users[users.size - 1].id)
 
             insertUsers(users)
-            emit(State.Success(users))
-        } else emit(it as State<List<GithubUser>>)
+            emit(BaseState.Success(users))
+        } else emit(it as BaseState<List<GithubUser>>)
     }
 
-    override suspend fun updateUsers(since: Int): Flow<State<List<GithubUserResponse>>> {
+    override suspend fun updateUsers(since: Int): Flow<BaseState<List<GithubUserResponse>>> {
         val resultFlow = safeApiCall { apiService.fetchUsers(since) }
         resultFlow.collect {
-            if (it is State.Success) {
+            if (it is BaseState.Success) {
                 val users = mapper.mapFromEntityList(it.data, since)
 
                 // updating successfully fetched Since Id

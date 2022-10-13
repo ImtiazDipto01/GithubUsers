@@ -1,7 +1,7 @@
 package com.imtiaz.githubuserstest.domain.usecase
 
 import com.google.gson.GsonBuilder
-import com.imtiaz.githubuserstest.core.extensions.State
+import com.imtiaz.githubuserstest.core.extensions.BaseState
 import com.imtiaz.githubuserstest.data.local.dao.FakeUserDaoImp
 import com.imtiaz.githubuserstest.data.local.db.dao.UserDao
 import com.imtiaz.githubuserstest.data.local.db.entity.GithubUser
@@ -83,10 +83,10 @@ class UpdateUsersUseCaseTest {
         val updatedUsersAfterMap = GithubUserMapper().mapFromEntityList(updatedUsersFromApi)
 
         updateUsersUseCase.execute(0)
-            .collect(object : FlowCollector<State<List<GithubUserResponse>>> {
-                override suspend fun emit(value: State<List<GithubUserResponse>>) {
-                    Assertions.assertTrue { (value as State.Success).data.size == 3 }
-                    Assertions.assertEquals((value as State.Success).data, updatedUsersFromApi)
+            .collect(object : FlowCollector<BaseState<List<GithubUserResponse>>> {
+                override suspend fun emit(value: BaseState<List<GithubUserResponse>>) {
+                    Assertions.assertTrue { (value as BaseState.Success).data.size == 3 }
+                    Assertions.assertEquals((value as BaseState.Success).data, updatedUsersFromApi)
                 }
             })
 
@@ -107,10 +107,10 @@ class UpdateUsersUseCaseTest {
         val updatedUsersAfterMap = GithubUserMapper().mapFromEntityList(updatedUsersFromApi)
 
         updateUsersUseCase.execute(0)
-            .collect(object : FlowCollector<State<List<GithubUserResponse>>> {
-                override suspend fun emit(value: State<List<GithubUserResponse>>) {
-                    Assertions.assertTrue { (value as State.Success).data.size == 3 }
-                    Assertions.assertEquals((value as State.Success).data, updatedUsersFromApi)
+            .collect(object : FlowCollector<BaseState<List<GithubUserResponse>>> {
+                override suspend fun emit(value: BaseState<List<GithubUserResponse>>) {
+                    Assertions.assertTrue { (value as BaseState.Success).data.size == 3 }
+                    Assertions.assertEquals((value as BaseState.Success).data, updatedUsersFromApi)
                 }
             })
 

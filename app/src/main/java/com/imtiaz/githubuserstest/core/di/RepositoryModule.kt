@@ -36,8 +36,8 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideUserProfile(service: ProfileService, mapper: ProfileMapper): ProfileRepository =
-        ProfileRepositoryImp(service, mapper)
+    fun provideUserProfile(service: ProfileService, userDao: UserDao, mapper: ProfileMapper): ProfileRepository =
+        ProfileRepositoryImp(service, userDao, mapper)
 
     @Provides
     @Singleton

@@ -1,7 +1,7 @@
 package com.imtiaz.githubuserstest.data.repository
 
 import com.imtiaz.githubuserstest.core.extensions.ErrorHandler
-import com.imtiaz.githubuserstest.core.extensions.State
+import com.imtiaz.githubuserstest.core.extensions.BaseState
 import com.imtiaz.githubuserstest.core.extensions.handleApiResponse
 import com.imtiaz.githubuserstest.data.local.db.dao.UserDao
 import com.imtiaz.githubuserstest.data.local.db.entity.GithubUser
@@ -25,7 +25,7 @@ class FakeUsersRepositoryImp(
     private val mapper: GithubUserMapper = GithubUserMapper(),
 ) : UsersRepository {
 
-    override suspend fun fetchUsers(since: Int): Flow<State<List<GithubUser>>> {
+    override suspend fun fetchUsers(since: Int): Flow<BaseState<List<GithubUser>>> {
         return when (testTag) {
             FETCH_AND_INSERT_USERS_SUCCESS -> successfulFetchAndInsert(since)
             INSERT_FAIL -> successfulFetchAndInsertFailed(since)
@@ -34,7 +34,7 @@ class FakeUsersRepositoryImp(
         }
     }
 
-    override suspend fun updateUsers(since: Int): Flow<State<List<GithubUserResponse>>> {
+    override suspend fun updateUsers(since: Int): Flow<BaseState<List<GithubUserResponse>>> {
         return when (testTag) {
             FETCH_AND_UPDATE_USERS -> successfulFetchAndUpdateUsers(since)
             FETCH_AND_UPDATE_FAIL -> successfulFetchAndFailedToUpdate(since)
@@ -56,7 +56,7 @@ class FakeUsersRepositoryImp(
 
     override fun getUsers(): Flow<List<GithubUser>> = userDao.getUsers()
 
-    private suspend fun successfulFetchAndInsert(since: Int): Flow<State<List<GithubUser>>> {
+    private suspend fun successfulFetchAndInsert(since: Int): Flow<BaseState<List<GithubUser>>> {
 
         val expectedResponse = MockResponse()
             .setResponseCode(HttpURLConnection.HTTP_OK)
@@ -69,10 +69,10 @@ class FakeUsersRepositoryImp(
         val users = mapper.mapFromEntityList(result as List<GithubUserResponse>, since)
 
         insertUsers(users)
-        return flow { emit(State.Success(users)) }
+        return flow { emit(BaseState.Success(users)) }
     }
 
-    private suspend fun successfulFetchAndInsertFailed(since: Int): Flow<State<List<GithubUser>>> {
+    private suspend fun successfulFetchAndInsertFailed(since: Int): Flow<BaseState<List<GithubUser>>> {
 
         val expectedResponse = MockResponse()
             .setResponseCode(HttpURLConnection.HTTP_OK)
@@ -85,10 +85,10 @@ class FakeUsersRepositoryImp(
         val users = mapper.mapFromEntityList(result as List<GithubUserResponse>, since)
 
         insertUsers(users)
-        return flow { emit(State.Success(users)) }
+        return flow { emit(BaseState.Success(users)) }
     }
 
-    private suspend fun badResponse(since: Int): Flow<State<List<GithubUser>>> {
+    private suspend fun badResponse(since: Int): Flow<BaseState<List<GithubUser>>> {
         val expectedResponse = MockResponse()
             .setResponseCode(HttpURLConnection.HTTP_INTERNAL_ERROR)
         mockServer.enqueue(expectedResponse)
@@ -97,14 +97,14 @@ class FakeUsersRepositoryImp(
 
         return flow {
             emit(
-                State.Error(
+                BaseState.Error(
                     ErrorHandler("Http Error", Exception("Http Error"), actualResponse.code())
                 )
             )
         }
     }
 
-    private suspend fun successfulFetchAndUpdateUsers(since: Int): Flow<State<List<GithubUserResponse>>> {
+    private suspend fun successfulFetchAndUpdateUsers(since: Int): Flow<BaseState<List<GithubUserResponse>>> {
 
         val expectedResponse = MockResponse()
             .setResponseCode(HttpURLConnection.HTTP_OK)
@@ -117,10 +117,10 @@ class FakeUsersRepositoryImp(
         val users = mapper.mapFromEntityList(result as List<GithubUserResponse>, since)
 
         updateUsers(users)
-        return flow { emit(State.Success(result)) }
+        return flow { emit(BaseState.Success(result)) }
     }
 
-    private suspend fun successfulFetchAndFailedToUpdate(since: Int): Flow<State<List<GithubUserResponse>>> {
+    private suspend fun successfulFetchAndFailedToUpdate(since: Int): Flow<BaseState<List<GithubUserResponse>>> {
 
         val expectedResponse = MockResponse()
             .setResponseCode(HttpURLConnection.HTTP_OK)
@@ -133,7 +133,7 @@ class FakeUsersRepositoryImp(
         val users = mapper.mapFromEntityList(result as List<GithubUserResponse>, since)
 
         updateUsers(users)
-        return flow { emit(State.Success(result)) }
+        return flow { emit(BaseState.Success(result)) }
     }
 
 }

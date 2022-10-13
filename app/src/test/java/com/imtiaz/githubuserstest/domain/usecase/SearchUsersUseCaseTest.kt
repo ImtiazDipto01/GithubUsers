@@ -1,19 +1,15 @@
 package com.imtiaz.githubuserstest.domain.usecase
 
 import com.google.gson.GsonBuilder
-import com.imtiaz.githubuserstest.core.extensions.State
 import com.imtiaz.githubuserstest.data.local.dao.FakeUserDaoImp
 import com.imtiaz.githubuserstest.data.local.db.dao.UserDao
-import com.imtiaz.githubuserstest.data.local.db.entity.GithubUser
 import com.imtiaz.githubuserstest.data.mapper.GithubUserMapper
-import com.imtiaz.githubuserstest.data.remote.dto.GithubUserResponse
 import com.imtiaz.githubuserstest.data.remote.service.ApiService
 import com.imtiaz.githubuserstest.data.repository.FakeUsersRepositoryImp
 import com.imtiaz.githubuserstest.data.util.*
 import com.imtiaz.githubuserstest.data.util.TestUtil.testTag
 import com.imtiaz.githubuserstest.domain.repository.UsersRepository
 import kotlinx.coroutines.InternalCoroutinesApi
-import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.runBlocking
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.jupiter.api.Assertions

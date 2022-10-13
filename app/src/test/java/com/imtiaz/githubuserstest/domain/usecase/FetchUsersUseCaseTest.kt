@@ -1,8 +1,7 @@
 package com.imtiaz.githubuserstest.domain.usecase
 
 import com.google.gson.GsonBuilder
-import com.imtiaz.githubuserstest.core.extensions.ErrorHandler
-import com.imtiaz.githubuserstest.core.extensions.State
+import com.imtiaz.githubuserstest.core.extensions.BaseState
 import com.imtiaz.githubuserstest.data.local.dao.FakeUserDaoImp
 import com.imtiaz.githubuserstest.data.local.db.dao.UserDao
 import com.imtiaz.githubuserstest.data.local.db.entity.GithubUser
@@ -81,10 +80,10 @@ class FetchUsersUseCaseTest {
     fun `fetch and insert users and confirm fetch and insert users is successful`() = runBlocking {
         testTag = FETCH_AND_INSERT_USERS_SUCCESS
 
-        fetchUsersUseCase.execute(0).collect(object : FlowCollector<State<List<GithubUser>>> {
-            override suspend fun emit(value: State<List<GithubUser>>) {
-                assertTrue { (value as State.Success).data.isNotEmpty() }
-                assertTrue { (value as State.Success).data.size == 3 }
+        fetchUsersUseCase.execute(0).collect(object : FlowCollector<BaseState<List<GithubUser>>> {
+            override suspend fun emit(value: BaseState<List<GithubUser>>) {
+                assertTrue { (value as BaseState.Success).data.isNotEmpty() }
+                assertTrue { (value as BaseState.Success).data.size == 3 }
             }
         })
 
@@ -100,9 +99,9 @@ class FetchUsersUseCaseTest {
         runBlocking {
             testTag = HTTP_ERROR
 
-            fetchUsersUseCase.execute(0).collect(object : FlowCollector<State<List<GithubUser>>> {
-                override suspend fun emit(value: State<List<GithubUser>>) {
-                    assertTrue { (value as State.Error).err.code == HttpURLConnection.HTTP_INTERNAL_ERROR }
+            fetchUsersUseCase.execute(0).collect(object : FlowCollector<BaseState<List<GithubUser>>> {
+                override suspend fun emit(value: BaseState<List<GithubUser>>) {
+                    assertTrue { (value as BaseState.Error).err.code == HttpURLConnection.HTTP_INTERNAL_ERROR }
                 }
             })
 
@@ -121,11 +120,11 @@ class FetchUsersUseCaseTest {
 
             val userlist = mutableListOf<GithubUser>()
 
-            fetchUsersUseCase.execute(0).collect(object : FlowCollector<State<List<GithubUser>>> {
-                override suspend fun emit(value: State<List<GithubUser>>) {
-                    assertTrue { (value as State.Success).data.isNotEmpty() }
-                    assertTrue { (value as State.Success).data.size == 3 }
-                    userlist.addAll((value as State.Success).data)
+            fetchUsersUseCase.execute(0).collect(object : FlowCollector<BaseState<List<GithubUser>>> {
+                override suspend fun emit(value: BaseState<List<GithubUser>>) {
+                    assertTrue { (value as BaseState.Success).data.isNotEmpty() }
+                    assertTrue { (value as BaseState.Success).data.size == 3 }
+                    userlist.addAll((value as BaseState.Success).data)
                 }
             })
 
