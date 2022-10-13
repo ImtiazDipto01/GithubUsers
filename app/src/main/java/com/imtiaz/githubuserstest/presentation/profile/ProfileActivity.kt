@@ -6,22 +6,34 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
-import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.imtiaz.githubuserstest.R
 import com.imtiaz.githubuserstest.core.extensions.CURRENT_USER
+import com.imtiaz.githubuserstest.core.extensions.loadImage
 import com.imtiaz.githubuserstest.data.local.db.entity.GithubUser
+import com.imtiaz.githubuserstest.presentation.profile.ui.component.TopBar
+import com.imtiaz.githubuserstest.presentation.profile.ui.component.UserDetails
 import com.imtiaz.githubuserstest.presentation.profile.ui.theme.GithubUsersTheme
+import com.imtiaz.githubuserstest.presentation.profile.ui.theme.Purple500
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -42,7 +54,7 @@ class ProfileActivity : ComponentActivity() {
                             TopBar(user?.login ?: "Github User App", this)
                         }
                     ) {
-
+                        UserDetails()
                     }
                 }
             }
@@ -50,19 +62,7 @@ class ProfileActivity : ComponentActivity() {
     }
 }
 
-@Composable
-fun TopBar(userName: String, activity: Activity) {
-    TopAppBar(
-        title = { Text(text = userName) },
-        navigationIcon = {
-            IconButton(
-                onClick = { activity.finish() }
-            ) {
-                Icon(Icons.Filled.ArrowBack, contentDescription = "Back Icon")
-            }
-        }
-    )
-}
+
 
 @Preview(showBackground = true)
 @Composable

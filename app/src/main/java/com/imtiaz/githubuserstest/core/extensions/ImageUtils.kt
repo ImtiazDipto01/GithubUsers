@@ -1,13 +1,21 @@
 package com.imtiaz.githubuserstest.core.extensions
 
 import android.graphics.*
+import android.graphics.drawable.Drawable
 import android.util.Log
 import android.widget.ImageView
+import androidx.annotation.DrawableRes
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.platform.LocalContext
 import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import com.imtiaz.githubuserstest.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -36,7 +44,7 @@ suspend fun ImageView.loadImageAsBitmap(url: String?) {
         .error(R.drawable.placeholder)
         .priority(Priority.HIGH)
 
-    val bitmap: Bitmap = withContext(Dispatchers.IO){
+    val bitmap: Bitmap = withContext(Dispatchers.IO) {
         Glide.with(this@loadImageAsBitmap)
             .asBitmap()
             .load(url)
@@ -53,6 +61,37 @@ suspend fun ImageView.loadImageAsBitmap(url: String?) {
     }
     this.setImageBitmap(bitmap)
 
+}
+
+@Composable
+fun loadImage(
+    url: String?,
+    @DrawableRes defaultImage: Int = R.drawable.placeholder
+): MutableState<Bitmap?> {
+    val bitmapState: MutableState<Bitmap?> = mutableStateOf(null)
+
+    Glide.with(LocalContext.current).asBitmap().load(defaultImage).into(
+        object : CustomTarget<Bitmap>() {
+            override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                bitmapState.value = resource
+            }
+
+            override fun onLoadCleared(placeholder: Drawable?) {
+            }
+        }
+    )
+
+    Glide.with(LocalContext.current).asBitmap().load(url).into(
+        object : CustomTarget<Bitmap>() {
+            override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                bitmapState.value = resource
+            }
+
+            override fun onLoadCleared(placeholder: Drawable?) {
+            }
+        }
+    )
+    return bitmapState
 }
 
 fun invertBitmap(src: Bitmap): Bitmap? {
