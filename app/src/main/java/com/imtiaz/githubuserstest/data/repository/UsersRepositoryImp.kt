@@ -11,7 +11,9 @@ import com.imtiaz.githubuserstest.data.local.db.entity.Page
 import com.imtiaz.githubuserstest.data.local.preference.PreferenceHelper
 import com.imtiaz.githubuserstest.data.remote.dto.GithubUserResponse
 import com.imtiaz.githubuserstest.domain.repository.UsersRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class UsersRepositoryImp @Inject constructor(
@@ -26,6 +28,7 @@ class UsersRepositoryImp @Inject constructor(
         apiService.fetchUsers(since)
     }.transform {
         if (it is BaseState.Success) {
+            Log.d("dataFetch", "fetchUsers")
             val users = mapper.mapFromEntityList(it.data, since)
 
             // updating successfully fetched Since Id
@@ -63,10 +66,25 @@ class UsersRepositoryImp @Inject constructor(
     }
 
     override suspend fun updateUsers(users: List<GithubUser>) {
-        try {
-            userDao.updateUsers(users)
-        } catch (e: Exception) {
-            Log.e(UPDATE_EXP, e.toString())
+        withContext(Dispatchers.IO) {
+            try {
+                for(user in users){
+                    val prevUser = userDao.getUser(user.id)
+                    if(prevUser != null) {
+                        val updatedUser = prevUser.copy(
+                            login = user.login,
+                            avatarUrl = user.avatarUrl,
+                            nodeId = user.nodeId,
+                            url = user.url,
+                            since = user.since
+                        )
+                        userDao.updateUser(updatedUser)
+                    }
+                    else userDao.insert(user)
+                }
+            } catch (e: Exception) {
+                Log.e(UPDATE_EXP, e.toString())
+            }
         }
     }
 

@@ -32,4 +32,5 @@ object DatabaseModule {
     @Singleton
     @Provides
     fun providePageDao(appDatabae: AppDatabase): PageDao = appDatabae.pageDao()
+
 }

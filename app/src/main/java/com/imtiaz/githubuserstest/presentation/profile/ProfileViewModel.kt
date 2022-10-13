@@ -1,15 +1,11 @@
 package com.imtiaz.githubuserstest.presentation.profile
 
-import android.provider.ContactsContract.Profile
-import android.util.Log
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imtiaz.githubuserstest.core.extensions.BaseState
-import com.imtiaz.githubuserstest.data.local.db.entity.GithubUser
 import com.imtiaz.githubuserstest.domain.usecase.GetProfileFromDbUseCase
 import com.imtiaz.githubuserstest.domain.usecase.GetProfileUseCase
+import com.imtiaz.githubuserstest.domain.usecase.UpdateUserUseCase
 import com.imtiaz.githubuserstest.presentation.profile.ui.state.ProfileState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collect
@@ -19,16 +15,17 @@ import javax.inject.Inject
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val getProfileUseCase: GetProfileUseCase,
-    private val getUserFromDbUseCase: GetProfileFromDbUseCase
+    private val getUserFromDbUseCase: GetProfileFromDbUseCase,
+    private val updateUserUseCase: UpdateUserUseCase
 ) : ViewModel() {
 
     private val _profileState = ProfileState()
     var profileState = _profileState
+    var userNote = ""
 
     fun getUser(loginId: String) {
         viewModelScope.launch {
             getUserFromDbUseCase.execute(loginId).collect {
-                Log.d("valueFromDb", it?.login ?: "null")
                 _profileState.user.value = it
             }
         }
@@ -48,6 +45,14 @@ class ProfileViewModel @Inject constructor(
                     else -> Unit
                 }
             }
+        }
+    }
+
+    fun updateUser() {
+        val user = _profileState.user.value
+        user?.let {
+            val updated = it.copy(note = userNote)
+            viewModelScope.launch { updateUserUseCase.execute(updated) }
         }
     }
 

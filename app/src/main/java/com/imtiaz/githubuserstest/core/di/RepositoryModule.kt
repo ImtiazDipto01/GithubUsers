@@ -5,7 +5,6 @@ import com.imtiaz.githubuserstest.data.local.db.dao.UserDao
 import com.imtiaz.githubuserstest.data.local.preference.PreferenceHelper
 import com.imtiaz.githubuserstest.data.mapper.GithubUserMapper
 import com.imtiaz.githubuserstest.data.mapper.ProfileMapper
-import com.imtiaz.githubuserstest.data.remote.dto.UserProfileResponse
 import com.imtiaz.githubuserstest.data.repository.ProfileRepositoryImp
 import com.imtiaz.githubuserstest.data.repository.UsersRepositoryImp
 import com.imtiaz.githubuserstest.data.remote.service.ApiService
@@ -32,11 +31,16 @@ object RepositoryModule {
         userDao: UserDao,
         pageDao: PageDao,
         pref: PreferenceHelper
-    ): UsersRepository = UsersRepositoryImp(service, mapper, userDao, pageDao, pref)
+    ): UsersRepository =
+        UsersRepositoryImp(service, mapper, userDao, pageDao, pref)
 
     @Provides
     @Singleton
-    fun provideUserProfile(service: ProfileService, userDao: UserDao, mapper: ProfileMapper): ProfileRepository =
+    fun provideUserProfile(
+        service: ProfileService,
+        userDao: UserDao,
+        mapper: ProfileMapper
+    ): ProfileRepository =
         ProfileRepositoryImp(service, userDao, mapper)
 
     @Provides

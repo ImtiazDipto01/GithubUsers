@@ -209,7 +209,10 @@ fun NoteInfoView(
         ) {
             BasicTextField(
                 value = text,
-                onValueChange = { text = it },
+                onValueChange = {
+                    text = it
+                    viewModel.userNote = it
+                },
                 maxLines = 3,
                 textStyle = TextStyle(
                     color = Color.DarkGray,
@@ -239,9 +242,9 @@ fun NoteInfoView(
 }
 
 @Composable
-fun SubmitButton(modifier: Modifier) {
+fun SubmitButton(modifier: Modifier, viewModel: ProfileViewModel = hiltViewModel()) {
     Button(
-        onClick = { /*TODO*/ },
+        onClick = { viewModel.updateUser() },
         modifier = modifier,
         colors = ButtonDefaults.buttonColors(
             backgroundColor = Purple500,
