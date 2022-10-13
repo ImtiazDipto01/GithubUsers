@@ -44,22 +44,26 @@ suspend fun ImageView.loadImageAsBitmap(url: String?) {
         .error(R.drawable.placeholder)
         .priority(Priority.HIGH)
 
-    val bitmap: Bitmap = withContext(Dispatchers.IO) {
-        Glide.with(this@loadImageAsBitmap)
-            .asBitmap()
-            .load(url)
-            .apply(options)
-            .diskCacheStrategy(DiskCacheStrategy.ALL)
-            .submit(100, 100)
-            .get()
-    }
+    try {
+        val bitmap: Bitmap = withContext(Dispatchers.IO) {
+            Glide.with(this@loadImageAsBitmap)
+                .asBitmap()
+                .load(url)
+                .apply(options)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .submit(100, 100)
+                .get()
+        }
 
-    val invertedBitmap = invertBitmap(bitmap)
-    invertedBitmap?.let {
-        this.setImageBitmap(it)
-        return
+        val invertedBitmap = invertBitmap(bitmap)
+        invertedBitmap?.let {
+            this.setImageBitmap(it)
+            return
+        }
+        this.setImageBitmap(bitmap)
+    } catch (exp: java.lang.Exception){
+        this.loadImage(url)
     }
-    this.setImageBitmap(bitmap)
 
 }
 
