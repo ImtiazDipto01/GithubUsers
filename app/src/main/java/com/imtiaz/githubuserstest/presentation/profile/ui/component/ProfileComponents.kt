@@ -2,24 +2,32 @@ package com.imtiaz.githubuserstest.presentation.profile.ui.component
 
 import android.app.Activity
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.FocusState
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.imtiaz.githubuserstest.R
 import com.imtiaz.githubuserstest.core.extensions.loadImage
+import com.imtiaz.githubuserstest.presentation.profile.ui.theme.Purple200
 import com.imtiaz.githubuserstest.presentation.profile.ui.theme.Purple500
 
 @Composable
@@ -40,12 +48,21 @@ fun TopBar(userName: String, activity: Activity) {
 fun UserDetails() {
     Box(
         modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxWidth()
+            .fillMaxSize()
     ) {
-        Column {
+        Column(
+            modifier = Modifier.fillMaxSize()
+        ) {
             Spacer(modifier = Modifier.height(40.dp))
             UserInfoCard()
+            NoteInfoView("Enter your note...")
+            Spacer(modifier = Modifier.fillMaxHeight(0.7f))
+            SubmitButton(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp)
+                    .padding(horizontal = 30.dp)
+            )
         }
         UserImage()
     }
@@ -58,7 +75,6 @@ fun UserInfoCard() {
         modifier = Modifier
             .padding(30.dp)
             .fillMaxWidth()
-            .height(250.dp)
             .shadow(
                 elevation = 5.dp,
                 shape = RoundedCornerShape(10.dp)
@@ -94,6 +110,16 @@ fun UserInfoCard() {
                     fontSize = 14.sp,
                 )
             }
+            Spacer(modifier = Modifier.height(16.dp))
+            Row(
+                horizontalArrangement = Arrangement.SpaceAround,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                UserMoreInfo("Followers")
+                UserMoreInfo("Repository")
+                UserMoreInfo("Stars")
+            }
+            Spacer(modifier = Modifier.height(26.dp))
         }
     }
 }
@@ -128,6 +154,101 @@ fun UserImage() {
 }
 
 @Composable
-fun UserMoreInfo() {
+fun UserMoreInfo(sectionName: String) {
+    Column(
+        modifier = Modifier.padding(10.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "125",
+            textAlign = TextAlign.Center,
+            color = Color.Black,
+            fontWeight = FontWeight.W400,
+            fontSize = 17.sp,
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            text = sectionName,
+            textAlign = TextAlign.Center,
+            color = Color.Gray,
+            fontWeight = FontWeight.W400,
+            fontSize = 16.sp,
+        )
 
+    }
+}
+
+@Composable
+fun NoteInfoView(
+    hint: String = ""
+) {
+    var text by remember {
+        mutableStateOf("")
+    }
+    var isHintDisplayed by remember {
+        mutableStateOf(hint.isNotEmpty())
+    }
+
+    Box() {
+        Card(
+            backgroundColor = Color.White,
+            modifier = Modifier
+                .padding(horizontal = 30.dp)
+                .fillMaxWidth()
+                .height(100.dp)
+                .shadow(
+                    elevation = 5.dp,
+                    shape = RoundedCornerShape(10.dp)
+                )
+        ) {
+            BasicTextField(
+                value = text ,
+                onValueChange = { text = it },
+                maxLines = 3,
+                textStyle = TextStyle(
+                    color = Color.DarkGray,
+                    fontSize = 16.sp,
+                    textAlign = TextAlign.Start
+                ),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.White, RoundedCornerShape(10.dp))
+                    .padding(16.dp)
+                    .onFocusChanged {
+                        isHintDisplayed = !it.isFocused
+                    },
+            )
+        }
+
+        if(isHintDisplayed){
+            Text(
+                text = hint,
+                textAlign = TextAlign.Start,
+                color = Color.Gray,
+                fontSize = 15.sp,
+                modifier = Modifier.padding(horizontal = 46.dp, vertical = 16.dp)
+            )
+        }
+    }
+}
+
+@Composable
+fun SubmitButton(modifier: Modifier) {
+    Button(
+        onClick = { /*TODO*/ },
+        modifier = modifier,
+        colors = ButtonDefaults.buttonColors(
+            backgroundColor = Purple500,
+            contentColor = Color.White
+        ),
+        shape = RoundedCornerShape(percent = 50),
+    ) {
+        Text(
+            text = "Save",
+            modifier = Modifier.padding(horizontal = 40.dp, vertical = 4.dp),
+            fontSize = 18.sp,
+            fontWeight = FontWeight.SemiBold
+        )
+    }
 }
