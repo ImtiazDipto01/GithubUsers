@@ -20,6 +20,9 @@ interface UserDao {
     @Update(onConflict = OnConflictStrategy.REPLACE)
     suspend fun updateUsers(user: List<GithubUser>)
 
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun updateUser(user: GithubUser)
+
     @Query("delete from user")
     suspend fun deleteUsers()
 

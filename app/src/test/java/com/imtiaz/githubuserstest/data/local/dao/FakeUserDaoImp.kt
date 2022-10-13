@@ -37,7 +37,15 @@ class FakeUserDaoImp(
         }
     }
 
+    override suspend fun updateUser(user: GithubUser) {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun deleteUsers() {
+        TODO("Not yet implemented")
+    }
+
+    override fun getUser(searchText: String): Flow<GithubUser?> {
         TODO("Not yet implemented")
     }
 
@@ -52,10 +60,6 @@ class FakeUserDaoImp(
             }
         }
         return list
-    }
-
-    override suspend fun getUser(searchText: String): GithubUser? {
-        TODO("Not yet implemented")
     }
 
     override fun getUsers(): Flow<List<GithubUser>> = flow { emit(users) }

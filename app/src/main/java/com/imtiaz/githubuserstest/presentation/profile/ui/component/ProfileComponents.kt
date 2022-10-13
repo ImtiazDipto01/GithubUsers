@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.imtiaz.githubuserstest.R
 import com.imtiaz.githubuserstest.core.extensions.loadImage
 import com.imtiaz.githubuserstest.presentation.profile.ProfileViewModel
@@ -53,7 +54,9 @@ fun UserDetails() {
 }
 
 @Composable
-fun UserInfoCard() {
+fun UserInfoCard(viewModel: ProfileViewModel = hiltViewModel()) {
+    val user = viewModel.profileState.user.value
+    val isLoading = viewModel.profileState.isLoading.value
     Card(
         backgroundColor = Color.White,
         modifier = Modifier
@@ -67,7 +70,7 @@ fun UserInfoCard() {
         Column {
             Spacer(modifier = Modifier.height(70.dp))
             Text(
-                text = "Imtiaz Dipto",
+                text = user?.name ?: "",
                 textAlign = TextAlign.Center,
                 color = Purple500,
                 fontWeight = FontWeight.Bold,
@@ -87,7 +90,7 @@ fun UserInfoCard() {
                 )
                 Spacer(modifier = Modifier.width(2.dp))
                 Text(
-                    text = "Dhaka, Bangladesh",
+                    text = user?.location ?: "Not Found",
                     textAlign = TextAlign.Center,
                     color = Color.DarkGray,
                     fontWeight = FontWeight.W200,
@@ -101,20 +104,25 @@ fun UserInfoCard() {
             ) {
                 UserMoreInfo("Followers")
                 UserMoreInfo("Repository")
-                UserMoreInfo("Stars")
+                UserMoreInfo("Following")
             }
             Spacer(modifier = Modifier.height(26.dp))
-            /*LinearProgressIndicator(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(5.dp)
-            )*/
+            if (isLoading) {
+                LinearProgressIndicator(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(5.dp)
+                )
+            }
         }
     }
 }
 
 @Composable
-fun UserImage() {
+fun UserImage(
+    viewModel: ProfileViewModel = hiltViewModel()
+) {
+    val userImg = viewModel.profileState.user.value?.avatarUrl
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center
@@ -130,7 +138,7 @@ fun UserImage() {
                     shape = RoundedCornerShape(50.dp)
                 )
         ) {
-            val image = loadImage(url = "https://avatars.githubusercontent.com/u/11765327?v=4")
+            val image = loadImage(url = userImg)
             image.value?.let {
                 Image(
                     bitmap = it.asImageBitmap(),
@@ -144,14 +152,19 @@ fun UserImage() {
 }
 
 @Composable
-fun UserMoreInfo(sectionName: String) {
+fun UserMoreInfo(sectionName: String, viewModel: ProfileViewModel = hiltViewModel()) {
+    val count = when (sectionName) {
+        "Followers" -> viewModel.profileState.user.value?.followers
+        "Repository" -> viewModel.profileState.user.value?.publicRepos
+        else -> viewModel.profileState.user.value?.following
+    }
     Column(
         modifier = Modifier.padding(10.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "125",
+            text = count.toString(),
             textAlign = TextAlign.Center,
             color = Color.Black,
             fontWeight = FontWeight.W400,
@@ -171,10 +184,12 @@ fun UserMoreInfo(sectionName: String) {
 
 @Composable
 fun NoteInfoView(
-    hint: String = ""
+    hint: String = "",
+    viewModel: ProfileViewModel = hiltViewModel()
 ) {
+
     var text by remember {
-        mutableStateOf("")
+        mutableStateOf(viewModel.profileState.user.value?.note ?: "")
     }
     var isHintDisplayed by remember {
         mutableStateOf(hint.isNotEmpty())

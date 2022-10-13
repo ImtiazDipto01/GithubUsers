@@ -1,5 +1,7 @@
 package com.imtiaz.githubuserstest.presentation.profile
 
+import android.provider.ContactsContract.Profile
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -20,15 +22,14 @@ class ProfileViewModel @Inject constructor(
     private val getUserFromDbUseCase: GetProfileFromDbUseCase
 ) : ViewModel() {
 
-    private var _state = mutableStateOf<ProfileState>(ProfileState())
-    val state: State<ProfileState> = _state
-
-    var profileState = ProfileState()
+    private val _profileState = ProfileState()
+    var profileState = _profileState
 
     fun getUser(loginId: String) {
         viewModelScope.launch {
             getUserFromDbUseCase.execute(loginId).collect {
-                _state.value = profileState.copy(user = it)
+                Log.d("valueFromDb", it?.login ?: "null")
+                _profileState.user.value = it
             }
         }
         fetchUserProfile(loginId)
@@ -38,11 +39,12 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch {
             getProfileUseCase.execute(loginId).collect {
                 when (it) {
-                    is BaseState.Loading -> _state.value = profileState.copy(isLoading = true)
-                    is BaseState.Success -> _state.value = profileState.copy(isLoading = false)
-                    is BaseState.Error -> _state.value = profileState.copy(
-                        isLoading = false, err = it.err
-                    )
+                    is BaseState.Loading -> _profileState.isLoading.value = true
+                    is BaseState.Success -> _profileState.isLoading.value = false
+                    is BaseState.Error -> _profileState.apply {
+                        isLoading.value = false
+                        _profileState.err.value = it.err
+                    }
                     else -> Unit
                 }
             }

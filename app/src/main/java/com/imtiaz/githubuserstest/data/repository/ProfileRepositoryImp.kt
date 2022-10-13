@@ -1,10 +1,7 @@
 package com.imtiaz.githubuserstest.data.repository
 
 import android.util.Log
-import com.imtiaz.githubuserstest.core.extensions.BaseState
-import com.imtiaz.githubuserstest.core.extensions.GET_USER_EXP
-import com.imtiaz.githubuserstest.core.extensions.SEARCH_EXP
-import com.imtiaz.githubuserstest.core.extensions.safeApiCall
+import com.imtiaz.githubuserstest.core.extensions.*
 import com.imtiaz.githubuserstest.data.local.db.dao.UserDao
 import com.imtiaz.githubuserstest.data.mapper.ProfileMapper
 import com.imtiaz.githubuserstest.data.remote.service.ProfileService
@@ -25,8 +22,12 @@ class ProfileRepositoryImp @Inject constructor(
         safeApiCall {
             apiService.getUserProfile(loginId)
         }.transform {
-            if (it is BaseState.Success)
-                emit(BaseState.Success(mapper.mapFromEntity(it.data)))
+            if (it is BaseState.Success){
+                val users = mapper.mapFromEntity(it.data)
+
+                updateUser(users)
+                emit(BaseState.Success(users))
+            }
             else emit(it as BaseState<GithubUser>)
         }
 
@@ -36,6 +37,14 @@ class ProfileRepositoryImp @Inject constructor(
         } catch (e: Exception) {
             Log.e(GET_USER_EXP, e.toString())
             flow<GithubUser?> { emit(null) }
+        }
+    }
+
+    override suspend fun updateUser(users: GithubUser) {
+        try {
+            userDao.updateUser(users)
+        } catch (e: Exception) {
+            Log.e(UPDATE_EXP, e.toString())
         }
     }
 
