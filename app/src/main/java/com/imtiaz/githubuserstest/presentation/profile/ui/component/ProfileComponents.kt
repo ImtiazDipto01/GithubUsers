@@ -15,6 +15,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -128,7 +129,8 @@ fun UserImage() {
                 Image(
                     bitmap = it.asImageBitmap(),
                     contentDescription = "location Icon",
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
                 )
             }
         }
@@ -185,7 +187,7 @@ fun NoteInfoView(
                 )
         ) {
             BasicTextField(
-                value = text ,
+                value = text,
                 onValueChange = { text = it },
                 maxLines = 3,
                 textStyle = TextStyle(
@@ -203,7 +205,7 @@ fun NoteInfoView(
             )
         }
 
-        if(isHintDisplayed){
+        if (isHintDisplayed) {
             Text(
                 text = hint,
                 textAlign = TextAlign.Start,
