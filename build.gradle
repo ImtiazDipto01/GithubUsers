@@ -13,6 +13,7 @@ buildscript {
         navigationVersion = '2.4.2'
         hiltVersion = '2.40.5'
         hiltXVersion = '1.0.0'
+        hiltComposeVersion = '1.0.0'
         lifecycleVersion = '2.4.1'
         lifecycleExtVersion = '2.2.0'
         roomVersion = '2.4.2'

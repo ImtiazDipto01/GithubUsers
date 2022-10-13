@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.imtiaz.githubuserstest.R
 import com.imtiaz.githubuserstest.core.extensions.loadImage
+import com.imtiaz.githubuserstest.presentation.profile.ProfileViewModel
 import com.imtiaz.githubuserstest.presentation.profile.ui.theme.Purple500
 
 
