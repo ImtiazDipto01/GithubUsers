@@ -54,5 +54,9 @@ class FakeUserDaoImp(
         return list
     }
 
+    override suspend fun getUser(searchText: String): GithubUser? {
+        TODO("Not yet implemented")
+    }
+
     override fun getUsers(): Flow<List<GithubUser>> = flow { emit(users) }
 }

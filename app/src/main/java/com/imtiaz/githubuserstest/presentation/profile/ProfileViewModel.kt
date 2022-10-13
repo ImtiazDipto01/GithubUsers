@@ -24,18 +24,17 @@ class ProfileViewModel @Inject constructor(
     val state: State<ProfileState> = _state
 
     var profileState = ProfileState()
-    val loginId: String = ""
 
-    fun getUsers(loginId: String) {
+    fun getUser(loginId: String) {
         viewModelScope.launch {
-            getUserFromDbUseCase.execute(loginId)?.let {
+            getUserFromDbUseCase.execute(loginId).collect {
                 _state.value = profileState.copy(user = it)
             }
         }
         fetchUserProfile(loginId)
     }
 
-    fun fetchUserProfile(loginId: String) {
+    private fun fetchUserProfile(loginId: String) {
         viewModelScope.launch {
             getProfileUseCase.execute(loginId).collect {
                 when (it) {

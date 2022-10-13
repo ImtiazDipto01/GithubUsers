@@ -27,7 +27,7 @@ interface UserDao {
     suspend fun searchUsersByLoginOrNote(searchText: String): List<GithubUser>
 
     @Query("select * from user where login = :searchText")
-    suspend fun getUser(searchText: String): GithubUser?
+    fun getUser(searchText: String): Flow<GithubUser?>
 
     @Query("select * from user order by id asc")
     fun getUsers(): Flow<List<GithubUser>>

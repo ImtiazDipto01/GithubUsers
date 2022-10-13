@@ -6,5 +6,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface ProfileRepository {
     suspend fun getUserProfile(loginId: String): Flow<BaseState<GithubUser>>
-    suspend fun getUserProfileFromDB(loginId: String): GithubUser?
+    suspend fun getUserProfileFromDB(loginId: String): Flow<GithubUser?>
 }
