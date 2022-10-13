@@ -38,7 +38,6 @@ class ProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initUi()
         collectProfileInfo()
-        viewModel.getUserProfile(args.user.login ?: "")
     }
 
     private fun collectProfileInfo() {

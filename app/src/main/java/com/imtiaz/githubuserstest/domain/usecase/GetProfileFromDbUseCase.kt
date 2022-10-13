@@ -7,5 +7,5 @@ import javax.inject.Inject
 class GetProfileFromDbUseCase @Inject constructor(
     private val repository: ProfileRepository
 ) {
-    suspend fun execute(loginId: String): GithubUser = repository.getUserProfileFromDB(loginId)
+    suspend fun execute(loginId: String): GithubUser? = repository.getUserProfileFromDB(loginId)
 }
