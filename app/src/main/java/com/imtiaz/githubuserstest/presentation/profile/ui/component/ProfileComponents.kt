@@ -1,21 +1,17 @@
 package com.imtiaz.githubuserstest.presentation.profile.ui.component
 
-import android.app.Activity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
@@ -27,22 +23,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.imtiaz.githubuserstest.R
 import com.imtiaz.githubuserstest.core.extensions.loadImage
-import com.imtiaz.githubuserstest.presentation.profile.ui.theme.Purple200
 import com.imtiaz.githubuserstest.presentation.profile.ui.theme.Purple500
 
-@Composable
-fun TopBar(userName: String, activity: Activity) {
-    TopAppBar(
-        title = { Text(text = userName) },
-        navigationIcon = {
-            IconButton(
-                onClick = { activity.finish() }
-            ) {
-                Icon(Icons.Filled.ArrowBack, contentDescription = "Back Icon")
-            }
-        }
-    )
-}
 
 @Composable
 fun UserDetails() {

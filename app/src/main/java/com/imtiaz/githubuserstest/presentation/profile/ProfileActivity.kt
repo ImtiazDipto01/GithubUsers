@@ -8,12 +8,13 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.imtiaz.githubuserstest.core.extensions.CURRENT_USER
 import com.imtiaz.githubuserstest.data.local.db.entity.GithubUser
-import com.imtiaz.githubuserstest.presentation.profile.ui.component.TopBar
 import com.imtiaz.githubuserstest.presentation.profile.ui.component.UserDetails
 import com.imtiaz.githubuserstest.presentation.profile.ui.theme.GithubUsersTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -44,7 +45,19 @@ class ProfileActivity : ComponentActivity() {
     }
 }
 
-
+@Composable
+fun TopBar(userName: String, activity: Activity) {
+    TopAppBar(
+        title = { Text(text = userName) },
+        navigationIcon = {
+            IconButton(
+                onClick = { activity.finish() }
+            ) {
+                Icon(Icons.Filled.ArrowBack, contentDescription = "Back Icon")
+            }
+        }
+    )
+}
 
 @Preview(showBackground = true)
 @Composable
