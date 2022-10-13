@@ -103,6 +103,11 @@ fun UserInfoCard() {
                 UserMoreInfo("Stars")
             }
             Spacer(modifier = Modifier.height(26.dp))
+            /*LinearProgressIndicator(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(5.dp)
+            )*/
         }
     }
 }
