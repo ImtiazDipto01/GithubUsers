@@ -8,6 +8,6 @@ import javax.inject.Inject
 class GetProfileFromDbUseCase @Inject constructor(
     private val repository: ProfileRepository
 ) {
-    suspend fun execute(loginId: String): Flow<GithubUser?> =
-        repository.getUserProfileFromDB(loginId)
+    suspend fun execute(id: Int): Flow<GithubUser?> =
+        repository.getUserProfileFromDB(id)
 }

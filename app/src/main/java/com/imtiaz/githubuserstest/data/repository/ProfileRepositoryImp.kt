@@ -25,24 +25,36 @@ class ProfileRepositoryImp @Inject constructor(
             if (it is BaseState.Success){
                 val users = mapper.mapFromEntity(it.data)
 
-                updateUser(users)
+                updateUserFromApi(users)
                 emit(BaseState.Success(users))
             }
             else emit(it as BaseState<GithubUser>)
         }
 
-    override suspend fun getUserProfileFromDB(loginId: String): Flow<GithubUser?> {
+    override suspend fun getUserProfileFromDB(id: Int): Flow<GithubUser?> {
         return try {
-            userDao.getUser(loginId)
+            userDao.getUserFlowAble(id)
         } catch (e: Exception) {
             Log.e(GET_USER_EXP, e.toString())
             flow<GithubUser?> { emit(null) }
         }
     }
 
-    override suspend fun updateUser(users: GithubUser) {
+    override suspend fun updateUser(user: GithubUser) {
         try {
-            userDao.updateUser(users)
+            userDao.updateUser(user)
+        } catch (e: Exception) {
+            Log.e(UPDATE_EXP, e.toString())
+        }
+    }
+
+    override suspend fun updateUserFromApi(user: GithubUser) {
+        try {
+            val prevUser = userDao.getUser(user.id)
+            prevUser?.let {
+                val updatedUser = user.copy(note = prevUser.note)
+                userDao.updateUser(updatedUser)
+            }
         } catch (e: Exception) {
             Log.e(UPDATE_EXP, e.toString())
         }

@@ -32,7 +32,9 @@ class ProfileActivity : ComponentActivity() {
             GithubUsersTheme {
                 // A surface container using the 'background' color from the theme
                 val user = getUsersFromIntent(intent)
-                viewModel.getUser(user?.login ?: "")
+                user?.let {
+                    viewModel.getUser(it.id, it.login)
+                }
 
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -43,7 +45,7 @@ class ProfileActivity : ComponentActivity() {
                             TopBar(user?.login ?: "Github User App", this)
                         }
                     ) {
-                        UserDetails()
+                        UserDetails(this)
                     }
                 }
             }

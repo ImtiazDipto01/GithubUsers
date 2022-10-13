@@ -1,5 +1,6 @@
 package com.imtiaz.githubuserstest.presentation.profile
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imtiaz.githubuserstest.core.extensions.BaseState
@@ -21,12 +22,14 @@ class ProfileViewModel @Inject constructor(
 
     private val _profileState = ProfileState()
     var profileState = _profileState
-    var userNote = ""
 
-    fun getUser(loginId: String) {
+    val userNote = mutableStateOf("")
+
+    fun getUser(id: Int, loginId: String) {
         viewModelScope.launch {
-            getUserFromDbUseCase.execute(loginId).collect {
+            getUserFromDbUseCase.execute(id).collect {
                 _profileState.user.value = it
+                userNote.value = it?.note ?: ""
             }
         }
         fetchUserProfile(loginId)
@@ -51,7 +54,7 @@ class ProfileViewModel @Inject constructor(
     fun updateUser() {
         val user = _profileState.user.value
         user?.let {
-            val updated = it.copy(note = userNote)
+            val updated = it.copy(note = userNote.value)
             viewModelScope.launch { updateUserUseCase.execute(updated) }
         }
     }

@@ -32,8 +32,8 @@ interface UserDao {
     @Query("select * from user where id = :id")
     suspend fun getUser(id: Int): GithubUser?
 
-    @Query("select * from user where login = :searchText")
-    fun getUser(searchText: String): Flow<GithubUser?>
+    @Query("select * from user where id = :id")
+    fun getUserFlowAble(id: Int): Flow<GithubUser?>
 
     @Query("select * from user order by id asc")
     fun getUsers(): Flow<List<GithubUser>>

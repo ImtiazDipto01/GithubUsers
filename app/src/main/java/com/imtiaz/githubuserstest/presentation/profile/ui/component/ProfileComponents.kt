@@ -1,5 +1,6 @@
 package com.imtiaz.githubuserstest.presentation.profile.ui.component
 
+import android.app.Activity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -16,6 +17,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -30,7 +32,7 @@ import com.imtiaz.githubuserstest.presentation.profile.ui.theme.Purple500
 
 
 @Composable
-fun UserDetails() {
+fun UserDetails(activity: Activity) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -43,6 +45,7 @@ fun UserDetails() {
             NoteInfoView("Enter your note...")
             Spacer(modifier = Modifier.fillMaxHeight(0.7f))
             SubmitButton(
+                activity,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp)
@@ -187,9 +190,10 @@ fun NoteInfoView(
     hint: String = "",
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
+    val note = viewModel.profileState.user.value?.note
 
     var text by remember {
-        mutableStateOf(viewModel.profileState.user.value?.note ?: "")
+        mutableStateOf( "")
     }
     var isHintDisplayed by remember {
         mutableStateOf(hint.isNotEmpty())
@@ -208,10 +212,10 @@ fun NoteInfoView(
                 )
         ) {
             BasicTextField(
-                value = text,
+                value = viewModel.userNote.value,
                 onValueChange = {
                     text = it
-                    viewModel.userNote = it
+                    viewModel.userNote.value = it
                 },
                 maxLines = 3,
                 textStyle = TextStyle(
@@ -229,7 +233,7 @@ fun NoteInfoView(
             )
         }
 
-        if (isHintDisplayed) {
+        if (isHintDisplayed && note == null) {
             Text(
                 text = hint,
                 textAlign = TextAlign.Start,
@@ -242,9 +246,12 @@ fun NoteInfoView(
 }
 
 @Composable
-fun SubmitButton(modifier: Modifier, viewModel: ProfileViewModel = hiltViewModel()) {
+fun SubmitButton(activity: Activity, modifier: Modifier, viewModel: ProfileViewModel = hiltViewModel()) {
     Button(
-        onClick = { viewModel.updateUser() },
+        onClick = {
+            viewModel.updateUser()
+            activity.finish()
+        },
         modifier = modifier,
         colors = ButtonDefaults.buttonColors(
             backgroundColor = Purple500,
