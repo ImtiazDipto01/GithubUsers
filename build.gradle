@@ -1,7 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.kotlin_version = "1.6.21"
+    ext.kotlin_version = "1.6.10"
     ext {
         ktxVersion = '1.7.0'
         activityKtxVersion = '1.4.0'
@@ -37,6 +37,8 @@ buildscript {
         fragment_version = "1.2.0"
         androidx_test_ext = "1.1.1"
         fabric_version = "1.31.2"
+        compose_version = '1.0.5'
+        compose_ui_version = '1.1.1'
     }
 
     repositories {
@@ -61,7 +63,7 @@ buildscript {
 plugins {
     id 'com.android.application' version '7.2.0' apply false
     id 'com.android.library' version '7.2.0' apply false
-    id 'org.jetbrains.kotlin.android' version '1.6.21' apply false
+    id 'org.jetbrains.kotlin.android' version '1.6.10' apply false
 }
 
 task clean(type: Delete) {
