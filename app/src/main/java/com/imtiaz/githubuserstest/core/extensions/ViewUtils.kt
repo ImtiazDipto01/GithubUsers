@@ -9,7 +9,7 @@ import com.imtiaz.githubuserstest.R
 fun MaterialToolbar.setup(
     context: Activity,
     title: String = "",
-    backgroundColor: Int = R.color.purple_500,
+    backgroundColor: Int = R.color.toolbar_color,
     textColor: Int = R.color.white,
     menu: Int? = null,
     isNavIconEnable: Boolean = true,

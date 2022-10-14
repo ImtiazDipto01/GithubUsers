@@ -68,6 +68,7 @@ class UsersRepositoryImp @Inject constructor(
     override suspend fun updateUsers(users: List<GithubUser>) {
         withContext(Dispatchers.IO) {
             try {
+                Log.d("MethodStatus", "updateUsers")
                 for(user in users){
                     val prevUser = userDao.getUser(user.id)
                     if(prevUser != null) {
@@ -90,6 +91,7 @@ class UsersRepositoryImp @Inject constructor(
 
     override suspend fun insertUsers(users: List<GithubUser>) {
         try {
+            Log.d("MethodStatus", "insertUsers")
             userDao.insertUsers(users)
         } catch (e: Exception) {
             Log.e(INSERT_EXP, e.toString())

@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
@@ -40,6 +41,7 @@ class UsersFragment : Fragment() {
 
     private var isLoading = false
     private var searchJob: Job? = null
+    private var isNightMode = false
 
     private val users: MutableList<GithubUser> by lazy { mutableListOf() }
 
@@ -47,6 +49,7 @@ class UsersFragment : Fragment() {
         super.onCreate(savedInstanceState)
         lifecycleScope.launch {
             viewModel.getUsers()
+            viewModel.userListFlow.collect {  }
         }
     }
 
@@ -76,11 +79,34 @@ class UsersFragment : Fragment() {
         layoutAppBar.toolBar.setup(
             requireActivity(),
             title = getString(R.string.app_name),
-            isNavIconEnable = false
+            isNavIconEnable = false,
+            menu = R.menu.menu_profile
         )
         initSearchTextChangeListener()
+        setToolbarMenuClickListener()
+
         if (viewModel.searchText.isNotEmpty()) etSearch.setText(viewModel.searchText)
         searchClear.setOnClickListener { etSearch.setText("") }
+    }
+
+    private fun setToolbarMenuClickListener() {
+        _binding.apply {
+            layoutAppBar.toolBar.setOnMenuItemClickListener { menuItem ->
+                when (menuItem.itemId) {
+                    R.id.action_change_mode -> {
+                        isNightMode = !isNightMode
+
+                        if(isNightMode)
+                            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                        else
+                            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+
+                        true
+                    }
+                    else -> false
+                }
+            }
+        }
     }
 
     /**
@@ -138,14 +164,15 @@ class UsersFragment : Fragment() {
      */
     private fun collectUsersFromDb() {
         lifecycleScope.launchWhenStarted {
-            viewModel.userListFlow.collectLatest {
-                users.apply {
-                    clear()
-                    addAll(it)
-                    userAdapter.submitList(it)
-                    //Log.d("checkCall", "size: ${users.size}")
+            viewModel.userListFlow.collectLatest { list ->
+                list?.let {
+                    users.apply {
+                        clear()
+                        addAll(it)
+                        userAdapter.submitList(it)
+                    }
+                    checkIfNeedInitialFetch()
                 }
-                checkIfNeedInitialFetch()
             }
         }
     }
@@ -273,6 +300,7 @@ class UsersFragment : Fragment() {
      *
      */
     private fun checkIfNeedInitialFetch() {
+        Log.d("checkCall", "checkIfNeedInitialFetch")
         if (users.size == 0)
             viewModel.fetchUsers(FIRST_PAGE)
     }
@@ -288,8 +316,12 @@ class UsersFragment : Fragment() {
 
         // here we're starting Profile Activity, because
         // this is only activity written in compose, otherwise will launch a fragment
+
+        val isDarkTheme = AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES
+
         Intent(requireActivity(), ProfileActivity::class.java).apply {
             putExtra(CURRENT_USER, it)
+            putExtra(APP_THEME, isDarkTheme)
             startActivity(this)
         }
     }

@@ -28,8 +28,8 @@ class UserViewModel @Inject constructor(
         MutableStateFlow(BaseState.Empty())
     val fetchUsersFlow = _fetchUsersStateFlow.asStateFlow()
 
-    private var _usersListStateFlow: MutableStateFlow<List<GithubUser>> =
-        MutableStateFlow(emptyList())
+    private var _usersListStateFlow: MutableStateFlow<List<GithubUser>?> =
+        MutableStateFlow(null)
     val userListFlow = _usersListStateFlow.asStateFlow()
 
     var errorHandler: ErrorHandler? = null
