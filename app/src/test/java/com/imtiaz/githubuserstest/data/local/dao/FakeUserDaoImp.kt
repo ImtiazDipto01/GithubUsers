@@ -73,7 +73,8 @@ class FakeUserDaoImp(
     }
 
     override fun getUserFlowAble(id: Int): Flow<GithubUser?> {
-        TODO("Not yet implemented")
+        val currUser = users.find { it.id == id }
+        return flow { emit(currUser) }
     }
 
     override fun getUsers(): Flow<List<GithubUser>> = flow { emit(users) }

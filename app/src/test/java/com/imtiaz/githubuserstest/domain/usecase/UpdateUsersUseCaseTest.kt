@@ -28,8 +28,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 
 /**
- * 1. Successfully fetched & updated user updated data and
- *      - fetch and parse updated user response
+ * 1. Successfully fetched & updated users updated data and
+ *      - fetch and parse updated users response
  *      - updating users info in db
  *      - confirm fetch updated users success
  *      - confirm user info updating in db success
@@ -38,13 +38,15 @@ import retrofit2.converter.gson.GsonConverterFactory
  *      - fetch and parse updated user response
  *      - updating users info failed
  *      - confirm fetch updated users success
- *      - confirm user info updating in db failed
+ *      - confirm users info updating in db failed
  *
  * 3. Successfully fetched & only Basic Information updated
  *      - fetch and parse updated user response
- *      - updating users info failed
- *      - confirm fetch updated users success
- *      - confirm user info updating in db failed
+ *      - updating users basic info
+ *      - confirm fetch success
+ *      - confirm basic info updated
+ *      - confirm more info not updated
+ *
  *
  * @constructor Create empty Update users use case test
  */

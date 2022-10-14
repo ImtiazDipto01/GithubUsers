@@ -32,7 +32,7 @@ class FakeProfileRepositoryImp(
     override suspend fun getUserProfile(loginId: String): Flow<BaseState<GithubUser>> {
         val expectedResponse = MockResponse()
             .setResponseCode(HttpURLConnection.HTTP_OK)
-            .setBody(updatedUsersResponse)
+            .setBody(profileResponse)
         mockServer.enqueue(expectedResponse)
 
         val actualResponse = service.getUserProfile(loginId)
@@ -49,7 +49,8 @@ class FakeProfileRepositoryImp(
     }
 
     override suspend fun getUserProfileFromDB(id: Int): Flow<GithubUser?> {
-        TODO("Not yet implemented")
+        return userDao.getUserFlowAble(id)
     }
+
 
 }
