@@ -26,26 +26,32 @@ class FakeUserDaoImp(
         if(testTag == FETCH_AND_UPDATE_FAIL) return
 
         for(updatedUser in updatedUsers) {
-            val isUserAlreadyExist = users.any { it.login == updatedUser.login }
-            val currUser = users.find { it.login == updatedUser.login }
-            if(isUserAlreadyExist && currUser != null && currUser != updatedUser){
+            val currUser = users.find { it.id == updatedUser.id }
+            if(currUser != null && currUser != updatedUser){
                 val index = users.indexOf(currUser)
-                users[index] = updatedUser
+                val newUpdatedUser = currUser.copy(
+                    login = updatedUser.login,
+                    avatarUrl = updatedUser.avatarUrl,
+                    nodeId = updatedUser.nodeId,
+                    url = updatedUser.url,
+                    since = updatedUser.since
+                )
+                users[index] = newUpdatedUser
             }
-            else if(!isUserAlreadyExist)
+            else if(currUser == null)
                 users.add(updatedUser)
         }
     }
 
-    override suspend fun updateUser(user: GithubUser) {
-        TODO("Not yet implemented")
+    override suspend fun updateUser(updatedUser: GithubUser) {
+        val currUser = users.find { it.id == updatedUser.id }
+        if(currUser != null && currUser != updatedUser){
+            val index = users.indexOf(currUser)
+            users[index] = updatedUser
+        }
     }
 
     override suspend fun deleteUsers() {
-        TODO("Not yet implemented")
-    }
-
-    override fun getUser(searchText: String): Flow<GithubUser?> {
         TODO("Not yet implemented")
     }
 
@@ -60,6 +66,14 @@ class FakeUserDaoImp(
             }
         }
         return list
+    }
+
+    override suspend fun getUser(id: Int): GithubUser? {
+        TODO("Not yet implemented")
+    }
+
+    override fun getUserFlowAble(id: Int): Flow<GithubUser?> {
+        TODO("Not yet implemented")
     }
 
     override fun getUsers(): Flow<List<GithubUser>> = flow { emit(users) }
