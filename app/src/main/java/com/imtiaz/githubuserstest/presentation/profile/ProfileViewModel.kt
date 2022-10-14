@@ -20,13 +20,18 @@ class ProfileViewModel @Inject constructor(
     private val updateUserUseCase: UpdateUserUseCase
 ) : ViewModel() {
 
+    // containing our profile data & ui states
+    // data updated from db, progress bar loading we're changing this [profileState]
     private val _profileState = ProfileState()
     var profileState = _profileState
 
+    // userNote contain note state changes when app user updating note
     val userNote = mutableStateOf("")
 
     fun getUser(id: Int, loginId: String) {
         viewModelScope.launch {
+
+            // fetch user info from db and updating states
             getUserFromDbUseCase.execute(id).collect {
                 _profileState.user.value = it
                 userNote.value = it?.note ?: ""
@@ -37,6 +42,8 @@ class ProfileViewModel @Inject constructor(
 
     private fun fetchUserProfile(loginId: String) {
         viewModelScope.launch {
+
+            // here fetching updated user info from server and updating states
             getProfileUseCase.execute(loginId).collect {
                 when (it) {
                     is BaseState.Loading -> _profileState.isLoading.value = true
@@ -51,6 +58,11 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
+    /**
+     * when submit button pressed from profile screen
+     * this method gets trigger for saving user info into db
+     *
+     */
     fun updateUser() {
         val user = _profileState.user.value
         user?.let {

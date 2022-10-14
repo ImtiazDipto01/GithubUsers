@@ -47,9 +47,11 @@ class UsersFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // calling viewmodel to fetch cached users list from db
+        // calling into onCreate, so that on Screen Rotation we get updated data
         lifecycleScope.launch {
             viewModel.getUsers()
-            viewModel.userListFlow.collect {  }
         }
     }
 
@@ -85,10 +87,15 @@ class UsersFragment : Fragment() {
         initSearchTextChangeListener()
         setToolbarMenuClickListener()
 
-        if (viewModel.searchText.isNotEmpty()) etSearch.setText(viewModel.searchText)
+        if (viewModel.searchText.isNotEmpty())
+            etSearch.setText(viewModel.searchText)
+
         searchClear.setOnClickListener { etSearch.setText("") }
     }
 
+    /**
+     * Setting toolbar menu click listener
+     */
     private fun setToolbarMenuClickListener() {
         _binding.apply {
             layoutAppBar.toolBar.setOnMenuItemClickListener { menuItem ->
@@ -165,6 +172,12 @@ class UsersFragment : Fragment() {
     private fun collectUsersFromDb() {
         lifecycleScope.launchWhenStarted {
             viewModel.userListFlow.collectLatest { list ->
+
+                // collecting and updating user list from here
+                // list can not be null that's why we're avoiding null emit
+                // state flow must have to be initial with a default value and
+                // that's why initialize state Flow with null value,
+                // so that we can determine null emit can be ignored and not process any operation
                 list?.let {
                     users.apply {
                         clear()
@@ -198,6 +211,10 @@ class UsersFragment : Fragment() {
         }
     }
 
+    /**
+     * Initializing recycler view, adapter here and observing
+     * pagination when app user reach end of the screen
+     */
     private fun initRecyclerView() = _binding.apply {
         recyclerview.apply {
             userAdapter = UsersAdapter(onItemClick(), onScrollUpdateData())
@@ -206,6 +223,9 @@ class UsersFragment : Fragment() {
 
             // paginating recyclerview
             PaginateRecyclerview(this, layoutManager) {
+
+                // here we're determining search field empty and
+                // any loading or data fetching not happening
                 val isSearchFieldEmpty = etSearch.text.isEmpty()
                 if (!isLoading && isSearchFieldEmpty) {
                     isLoading = true

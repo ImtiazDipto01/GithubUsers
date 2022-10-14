@@ -24,22 +24,32 @@ class UserViewModel @Inject constructor(
     private val pref: PreferenceHelper
 ) : ViewModel() {
 
+    // observing only loading and error state, Ui doesn't consume any data from this flow
     private var _fetchUsersStateFlow: MutableStateFlow<BaseState<List<GithubUser>>> =
         MutableStateFlow(BaseState.Empty())
     val fetchUsersFlow = _fetchUsersStateFlow.asStateFlow()
 
+    // only data source that provide data to UI
     private var _usersListStateFlow: MutableStateFlow<List<GithubUser>?> =
         MutableStateFlow(null)
     val userListFlow = _usersListStateFlow.asStateFlow()
 
+    // If any error happens when fetching data
+    // errorHandle save that error as last error so that,
+    // when network connectivity get change ui can determine by checking error
+    // that any data need fetch or not
     var errorHandler: ErrorHandler? = null
+
+    // contains user search text, useful for screen rotation
+    // if any searchText available at that time
     var searchText: String = ""
 
     init {
+        // as App get started, clearing recent successfully fetched since id
         pref.clearList()
-        //viewModelScope.launch { getUsers() }
     }
 
+    // fetching user list from server
     fun fetchUsers(since: Int) {
         viewModelScope.launch {
             fetchUsersUseCase.execute(since).collect {
@@ -48,26 +58,33 @@ class UserViewModel @Inject constructor(
         }
     }
 
+    // for paging
     fun startPaging() {
         viewModelScope.launch {
+            // getting last since id from db
             val since = getPageUserCase.execute()
             fetchUsers(since)
         }
     }
 
+    // for searching & fetching user list
     suspend fun searchUsers(searchText: String): List<GithubUser> =
         withContext(Dispatchers.IO) { searchUsersUseCase.execute(searchText) }
 
+    // for fetching updated user data from server
     fun updateUsersData(since: Int) {
-        if (!pref.isSinceContain(since))
-            updateUsers(since)
+
+        // checking is this page fetched in current app runtime,
+        // if yes then we're not fetching for multiple time
+        viewModelScope.launch {
+            if (!pref.isSinceContain(since)) {
+                updateUsersUseCase.execute(since)
+            }
+        }
     }
 
-    private fun updateUsers(since: Int) =
-        viewModelScope.launch {
-            updateUsersUseCase.execute(since)
-        }
-
+    // fetch all the users from our local database and
+    // [_usersListStateFlow] collect that data for UI
     suspend fun getUsers() {
         return withContext(Dispatchers.Main) {
             getUsersUseCase.execute().collect {

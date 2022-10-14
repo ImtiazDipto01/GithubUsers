@@ -5,6 +5,11 @@ import com.imtiaz.githubuserstest.data.remote.dto.GithubUserResponse
 import com.imtiaz.githubuserstest.data.local.db.entity.GithubUser
 import javax.inject.Inject
 
+/**
+ * A simple mapper class that helps to map Api Response[GithubUserResponse] to [GithubUser]
+ *
+ * @constructor Create empty Github user mapper
+ */
 class GithubUserMapper @Inject constructor(): EntityMapper<GithubUserResponse, GithubUser>() {
 
     override fun mapFromEntity(entity: GithubUserResponse): GithubUser {

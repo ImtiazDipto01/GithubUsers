@@ -4,10 +4,10 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -15,10 +15,10 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.imtiaz.githubuserstest.R
 import com.imtiaz.githubuserstest.core.extensions.APP_THEME
 import com.imtiaz.githubuserstest.core.extensions.CURRENT_USER
 import com.imtiaz.githubuserstest.data.local.db.entity.GithubUser
+import com.imtiaz.githubuserstest.presentation.main.MainViewModel
 import com.imtiaz.githubuserstest.presentation.profile.ui.component.UserDetails
 import com.imtiaz.githubuserstest.presentation.profile.ui.theme.GithubUsersTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -27,21 +27,22 @@ import dagger.hilt.android.AndroidEntryPoint
 class ProfileActivity : ComponentActivity() {
 
     private val viewModel: ProfileViewModel by viewModels()
+    private val mainViewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // fetching user info from db
+        val user = getUsersFromIntent(intent)
+        user?.let {
+            viewModel.getUser(it.id, it.login)
+        }
 
         setContent {
             GithubUsersTheme(
                 darkTheme = getTheme(intent)
             ) {
                 // A surface container using the 'background' color from the theme
-                val user = getUsersFromIntent(intent)
-
-                user?.let {
-                    viewModel.getUser(it.id, it.login)
-                }
-
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
@@ -57,6 +58,7 @@ class ProfileActivity : ComponentActivity() {
             }
         }
     }
+
 }
 
 @Composable
@@ -73,13 +75,6 @@ fun TopBar(userName: String, activity: Activity) {
     )
 }
 
-fun initTheme(intent: Intent) {
-    val theme = when(getTheme(intent)){
-        true -> AppCompatDelegate.MODE_NIGHT_NO
-        false -> AppCompatDelegate.MODE_NIGHT_YES
-    }
-    AppCompatDelegate.setDefaultNightMode(theme)
-}
 
 @Preview(showBackground = true)
 @Composable
@@ -98,4 +93,5 @@ fun getUsersFromIntent(intent: Intent): GithubUser? {
 fun getTheme(intent: Intent): Boolean {
     return intent.getBooleanExtra(APP_THEME, false)
 }
+
 
