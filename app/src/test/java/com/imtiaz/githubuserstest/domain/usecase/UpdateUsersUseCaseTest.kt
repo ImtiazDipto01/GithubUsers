@@ -40,6 +40,12 @@ import retrofit2.converter.gson.GsonConverterFactory
  *      - confirm fetch updated users success
  *      - confirm user info updating in db failed
  *
+ * 3. Successfully fetched & only Basic Information updated
+ *      - fetch and parse updated user response
+ *      - updating users info failed
+ *      - confirm fetch updated users success
+ *      - confirm user info updating in db failed
+ *
  * @constructor Create empty Update users use case test
  */
 @OptIn(InternalCoroutinesApi::class)
@@ -84,8 +90,8 @@ class UpdateUsersUseCaseTest {
         // preset api response
         val updatedUsersFromApi = getUpdatedUsersResponse()
 
-        // preset api mapping response
-        val updatedUsersAfterMap = GithubUserMapper().mapFromEntityList(updatedUsersFromApi)
+        // preset api mapping data
+        val updatedUsers = GithubUserMapper().mapFromEntityList(updatedUsersFromApi)
 
         // fetching updated user response from mock server
         updateUsersUseCase.execute(0)
@@ -103,7 +109,7 @@ class UpdateUsersUseCaseTest {
         // fetching users from local db
         repository.getUsers().collect(object : FlowCollector<List<GithubUser>> {
             override suspend fun emit(value: List<GithubUser>) {
-                for (updatedUser in updatedUsersAfterMap) {
+                for (updatedUser in updatedUsers) {
 
                     // in every loop we're checking/matching everything updated properly
                     Assertions.assertTrue { value.contains(updatedUser) }
@@ -119,8 +125,8 @@ class UpdateUsersUseCaseTest {
         // preset api response
         val updatedUsersFromApi = getUpdatedUsersResponse()
 
-        // preset api mapping response
-        val updatedUsersAfterMap = GithubUserMapper().mapFromEntityList(updatedUsersFromApi)
+        // preset api mapping data
+        val updatedUsers = GithubUserMapper().mapFromEntityList(updatedUsersFromApi)
 
         // fetching updated user response from mock server
         updateUsersUseCase.execute(0)
@@ -139,9 +145,9 @@ class UpdateUsersUseCaseTest {
         repository.getUsers().collect(object : FlowCollector<List<GithubUser>> {
             override suspend fun emit(value: List<GithubUser>) {
 
-                // checking is data updating failed
-                Assertions.assertTrue { value[0] != updatedUsersAfterMap[0] }
-                Assertions.assertTrue { value[1] != updatedUsersAfterMap[1] }
+                // checking updated data and cached data not matching, means updated failed
+                Assertions.assertTrue { value[0] != updatedUsers[0] }
+                Assertions.assertTrue { value[1] != updatedUsers[1] }
             }
         })
     }
@@ -153,7 +159,7 @@ class UpdateUsersUseCaseTest {
         // preset api response
         val updatedUsersFromApi = getUpdatedUsersResponse()
 
-        // preset api mapping response
+        // preset api mapping data
         val updatedUsers = GithubUserMapper().mapFromEntityList(updatedUsersFromApi)
 
         // initially updating first user note
@@ -180,16 +186,18 @@ class UpdateUsersUseCaseTest {
 
         repository.getUsers().collect(object : FlowCollector<List<GithubUser>> {
             override suspend fun emit(value: List<GithubUser>) {
-                // checking updated avatar and api response avatar matching
+
+                // only basic info updated, checking updated avatar and api response avatar matching
                 Assertions.assertTrue { value[0].avatarUrl == updatedUsers[0].avatarUrl }
 
-                // checking updated login and api response login matching
+                // only basic info updated, checking updated login and api response login matching
                 Assertions.assertTrue { value[0].login == updatedUsers[0].login }
 
-                // api response doesn't contain any note param that's why note value not updated
+                // api response doesn't contain any note param that's why
+                // checking current note and response note not matches
                 Assertions.assertTrue { value[0].note != updatedUsers[0].note }
 
-                // current note not replaced by api response, that's why note value remains same
+                // checking current note not replaced by api response
                 Assertions.assertTrue { value[0].note != null && value[0].note?.isNotEmpty() == true }
             }
         })
