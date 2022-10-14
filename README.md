@@ -9,3 +9,6 @@ This simply load github users list from github open [REST API](https://docs.gith
 - Always Background synchronized 
 - Profile screen built with Jetpack Compose
 
+## App UI
+![](https://github.com/ImtiazDipto01/GithubUsers/blob/master/screenshot_1.png)   ![](https://github.com/ImtiazDipto01/GithubUsers/blob/master/screenshot_2.png)
+
