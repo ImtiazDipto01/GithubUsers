@@ -16,7 +16,7 @@ This simply load github users list from github open [REST API](https://docs.gith
   - [Mutable State Flow](https://developer.android.com/kotlin/flow/stateflow-and-sharedflow) - for emit UI state with data.
   - [Mutable Shared Flow](https://developer.android.com/kotlin/flow/stateflow-and-sharedflow) - for emit one time event.
 - [Jetpack Compose](https://developer.android.com/jetpack/compose) - Jetpack compose support for Profile Screen
-- Clean Architecture on Top Of MVVM
+- **Clean Architecture on Top of MVVM Architecture**
 - [Android Architecture Components](https://developer.android.com/topic/libraries/architecture) - Collection of libraries that help you design robust, testable, and maintainable apps.
   - [ViewModel](https://developer.android.com/topic/libraries/architecture/viewmodel) - Stores UI-related data that isn't destroyed on UI changes. 
   - [ViewBinding](https://developer.android.com/topic/libraries/view-binding) - Generates a binding class for each XML layout file present in that module and allows you to more easily write code that interacts with views.
