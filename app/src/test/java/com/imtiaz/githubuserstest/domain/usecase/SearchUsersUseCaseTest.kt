@@ -44,19 +44,24 @@ class SearchUsersUseCaseTest {
 
     @BeforeEach
     fun setup() {
+        //created mock server
         mockWebServer = MockWebServer()
         mockWebServer.start()
         val baseurl = mockWebServer.url("/")
+
+        // created api services
         apiService = Retrofit.Builder()
             .baseUrl(baseurl)
             .addConverterFactory(GsonConverterFactory.create(GsonBuilder().create()))
             .build()
             .create(ApiService::class.java)
 
+        //setting up note data
         val users = GithubUserMapper().mapFromEntityList(getInitialUserResponse()).map {
             it.copy(note = if (it.id == 1) "Backend Developer" else "Frontend Developer")
         }
 
+        // all instance created for Use case
         dao = FakeUserDaoImp(users.toMutableList())
         repository = FakeUsersRepositoryImp(dao, apiService, mockWebServer)
         searchUsersUseCase = SearchUsersUseCase(repository)
@@ -67,12 +72,22 @@ class SearchUsersUseCaseTest {
     fun `search users by login id as searchKey and confirm successful user list`() = runBlocking {
         testTag = SEARCH_USERS
 
+        // fetching user list response from local db
         val list = searchUsersUseCase.execute("mojombo")
+
+        // confirming list size is 1
         Assertions.assertTrue { list.size == 1 }
+
+        // confirming expected data
         Assertions.assertTrue { list[0].login == "mojombo" }
 
+        // fetching another user list response from local db
         val list2 = searchUsersUseCase.execute("fun")
+
+        // confirming list size is 1
         Assertions.assertTrue { list2.size == 1 }
+
+        // confirming expected data
         Assertions.assertTrue { list2[0].login == "defunkt" }
     }
 
@@ -81,10 +96,19 @@ class SearchUsersUseCaseTest {
         runBlocking {
             testTag = SEARCH_USERS
 
+            // searching user list response from local db
             val list = searchUsersUseCase.execute("end")
+
+            // confirming expected list size
             Assertions.assertTrue { list.size == 3 }
+
+            // confirming expected login id info
             Assertions.assertTrue { list[0].login == "mojombo" }
+
+            // confirming expected login id info
             Assertions.assertTrue { list[2].login == "pjhyett" }
+
+            // confirming expected note info
             Assertions.assertTrue { list[1].note == "Frontend Developer" }
         }
     }
@@ -94,7 +118,10 @@ class SearchUsersUseCaseTest {
         runBlocking {
             testTag = SEARCH_FAIL
 
+            // searching user list response from local db
             val list = searchUsersUseCase.execute("end")
+
+            // confirming search failed
             Assertions.assertTrue { list.isEmpty() }
         }
     }
@@ -104,8 +131,11 @@ class SearchUsersUseCaseTest {
         runBlocking {
             testTag = SEARCH_USERS
 
+            // searching user list response from local db
             val list = searchUsersUseCase.execute("hull")
-            Assertions.assertTrue { list.size == 0 }
+
+            // confirming empty list
+            Assertions.assertTrue { list.isEmpty() }
         }
     }
 

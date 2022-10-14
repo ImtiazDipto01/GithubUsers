@@ -60,15 +60,19 @@ class FetchUsersUseCaseTest {
 
     @BeforeEach
     fun setup() {
+        //created mock server
         mockWebServer = MockWebServer()
         mockWebServer.start()
         val baseurl = mockWebServer.url("/")
+
+        // created api services
         apiService = Retrofit.Builder()
             .baseUrl(baseurl)
             .addConverterFactory(GsonConverterFactory.create(GsonBuilder().create()))
             .build()
             .create(ApiService::class.java)
 
+        // all instance created for Use case
         dao = FakeUserDaoImp()
         repository = FakeUsersRepositoryImp(dao, apiService, mockWebServer)
         fetchUsersUseCase = FetchUsersUseCase(
@@ -80,16 +84,34 @@ class FetchUsersUseCaseTest {
     fun `fetch and insert users and confirm fetch and insert users is successful`() = runBlocking {
         testTag = FETCH_AND_INSERT_USERS_SUCCESS
 
+        val userListFromApi = mutableListOf<GithubUser>()
+
+        // fetching user list response from mock server
         fetchUsersUseCase.execute(0).collect(object : FlowCollector<BaseState<List<GithubUser>>> {
             override suspend fun emit(value: BaseState<List<GithubUser>>) {
+
+                // adding full user list what we got server
+                userListFromApi.addAll((value as BaseState.Success).data)
+
+                // confirming our mock response is not empty
                 assertTrue { (value as BaseState.Success).data.isNotEmpty() }
+
+                // confirming our mock response data size is 3, means successful fetch
                 assertTrue { (value as BaseState.Success).data.size == 3 }
             }
         })
 
+        delay(200)
+
+        // fetching data from local db
         repository.getUsers().collect(object : FlowCollector<List<GithubUser>> {
             override suspend fun emit(value: List<GithubUser>) {
+
+                // confirming our local db contains 3 users
                 assertTrue { value.size == 3 }
+
+                // confirming our local db user info matches with the server user info
+                assertTrue { value[0] == userListFromApi[0] }
             }
         })
     }
@@ -99,14 +121,20 @@ class FetchUsersUseCaseTest {
         runBlocking {
             testTag = HTTP_ERROR
 
+            // fetching user list response from mock server
             fetchUsersUseCase.execute(0).collect(object : FlowCollector<BaseState<List<GithubUser>>> {
                 override suspend fun emit(value: BaseState<List<GithubUser>>) {
+
+                    // confirming that we got HTTP ERROR
                     assertTrue { (value as BaseState.Error).err.code == HttpURLConnection.HTTP_INTERNAL_ERROR }
                 }
             })
 
+            // fetching data from local db
             repository.getUsers().collect(object : FlowCollector<List<GithubUser>> {
                 override suspend fun emit(value: List<GithubUser>) {
+
+                    // confirming our local db user list is empty, means no data inserted
                     assertTrue { value.isEmpty() }
                 }
             })
@@ -120,10 +148,17 @@ class FetchUsersUseCaseTest {
 
             val userlist = mutableListOf<GithubUser>()
 
+            // fetching user list response from mock server
             fetchUsersUseCase.execute(0).collect(object : FlowCollector<BaseState<List<GithubUser>>> {
                 override suspend fun emit(value: BaseState<List<GithubUser>>) {
+
+                    // confirming our response is not empty
                     assertTrue { (value as BaseState.Success).data.isNotEmpty() }
+
+                    // confirming our mock response data size is 3, means successful fetch
                     assertTrue { (value as BaseState.Success).data.size == 3 }
+
+                    // adding full user list what we got server
                     userlist.addAll((value as BaseState.Success).data)
                 }
             })
@@ -132,11 +167,15 @@ class FetchUsersUseCaseTest {
 
             repository.getUsers().collect(object : FlowCollector<List<GithubUser>> {
                 override suspend fun emit(value: List<GithubUser>) {
+
+                    // confirming our local db user list size not matching with response list
                     assertTrue { value.size != userlist.size }
                 }
             })
 
             val searchedUsers = repository.searchUsersByLoginOrNote(userlist[2].login)
+
+            // confirming local db user list empty, insertion failed
             assertTrue { searchedUsers.isEmpty() }
         }
     }
