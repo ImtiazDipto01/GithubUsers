@@ -2,6 +2,7 @@ package com.imtiaz.githubuserstest.presentation.user
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,6 +24,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.io.IOException
 
@@ -36,10 +38,17 @@ class UsersFragment : Fragment() {
     private lateinit var userAdapter: UsersAdapter
     private lateinit var _binding: FragmentUsersBinding
 
-    private val users: MutableList<GithubUser> by lazy { mutableListOf() }
-
     private var isLoading = false
     private var searchJob: Job? = null
+
+    private val users: MutableList<GithubUser> by lazy { mutableListOf() }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        lifecycleScope.launch {
+            viewModel.getUsers()
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -70,6 +79,7 @@ class UsersFragment : Fragment() {
             isNavIconEnable = false
         )
         initSearchTextChangeListener()
+        if (viewModel.searchText.isNotEmpty()) etSearch.setText(viewModel.searchText)
         searchClear.setOnClickListener { etSearch.setText("") }
     }
 
@@ -79,9 +89,10 @@ class UsersFragment : Fragment() {
      */
     private fun initSearchTextChangeListener() = _binding.apply {
         etSearch.addTextChangedListener(
-            onTextChanged = { text, _, _, _->
+            onTextChanged = { text, _, _, _ ->
                 text?.let {
                     searchClear.isVisible = it.toString().isNotEmpty()
+                    viewModel.searchText = it.toString()
                     val text = it.toString().lowercase()
                     delayAndStartSearch(text)
                 }
@@ -101,7 +112,7 @@ class UsersFragment : Fragment() {
         // don't get overlap with previous job
         searchJob?.cancel()
 
-        if(text.length > 1){
+        if (text.length > 1) {
             // if search text contains at least 2 characters then we'll start processing the search
             searchJob = lifecycleScope.launch(Dispatchers.Main) {
                 delay(200)
@@ -110,7 +121,7 @@ class UsersFragment : Fragment() {
                 userAdapter.submitList(result)
             }
         }
-        if(text.isEmpty()) {
+        if (text.isEmpty()) {
             // if search text is empty we're clearing the full list
             // showing previous full users list
             userAdapter.apply {
@@ -127,11 +138,12 @@ class UsersFragment : Fragment() {
      */
     private fun collectUsersFromDb() {
         lifecycleScope.launchWhenStarted {
-            viewModel.getUsers().collect {
+            viewModel.userListFlow.collectLatest {
                 users.apply {
                     clear()
                     addAll(it)
                     userAdapter.submitList(it)
+                    //Log.d("checkCall", "size: ${users.size}")
                 }
                 checkIfNeedInitialFetch()
             }
@@ -179,12 +191,14 @@ class UsersFragment : Fragment() {
     private fun handleLoadingState(isLoading: Boolean) = _binding.apply {
         this@UsersFragment.isLoading = isLoading
 
+        Log.d("checkCall", "handleLoadingState")
+
         // Hiding all Error view
         layoutError.parentLayout.isVisible = false
         layoutBottom.parentLayout.isVisible = false
 
         if (isLoading) {
-            if (userAdapter.itemCount == 0) {
+            if (users.size == 0) {
                 // showing Initial Loader
                 handleInitialLoading(isLoading)
                 recyclerview.isVisible = !isLoading
@@ -207,7 +221,7 @@ class UsersFragment : Fragment() {
 
     private fun handleError(err: ErrorHandler) = _binding.apply {
         viewModel.errorHandler = err
-        if (userAdapter.itemCount == 0) {
+        if (users.size == 0) {
             // showing error view center of view
             layoutError.parentLayout.isVisible = true
             layoutError.textErrorMsg.text = err.msg
@@ -229,14 +243,13 @@ class UsersFragment : Fragment() {
 
                 if (isNetworkAvailable && hasError) {
                     val isIOException = viewModel.errorHandler?.exception is IOException
-                    val hasNoDataAvailable = userAdapter.itemCount == 0
+                    val hasNoDataAvailable = users.size == 0
 
                     // checking If we need to fetch first page otherwise fetch next page
                     if (isIOException && hasNoDataAvailable) {
                         viewModel.fetchUsers(FIRST_PAGE)
                         return@collect
-                    }
-                    else if(isIOException) viewModel.startPaging()
+                    } else if (isIOException) viewModel.startPaging()
                 }
             }
         }
@@ -249,7 +262,7 @@ class UsersFragment : Fragment() {
      */
     private fun handleInitialLoading(isLoading: Boolean) = _binding.apply {
         layoutSkeleton.parentLayout.isVisible = isLoading
-        if(isLoading)
+        if (isLoading)
             layoutSkeleton.shimmerViewContainer.startShimmer()
         else layoutSkeleton.shimmerViewContainer.stopShimmer()
     }
@@ -260,7 +273,7 @@ class UsersFragment : Fragment() {
      *
      */
     private fun checkIfNeedInitialFetch() {
-        if (userAdapter.itemCount == 0)
+        if (users.size == 0)
             viewModel.fetchUsers(FIRST_PAGE)
     }
 

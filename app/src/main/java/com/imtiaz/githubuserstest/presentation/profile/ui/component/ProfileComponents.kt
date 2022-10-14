@@ -4,8 +4,10 @@ import android.app.Activity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -33,26 +35,30 @@ import com.imtiaz.githubuserstest.presentation.profile.ui.theme.Purple500
 
 @Composable
 fun UserDetails(activity: Activity) {
-    Box(
+    Column(
         modifier = Modifier
             .fillMaxSize()
+            .verticalScroll(rememberScrollState())
     ) {
-        Column(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            Spacer(modifier = Modifier.height(40.dp))
-            UserInfoCard()
-            NoteInfoView("Enter your note...")
-            Spacer(modifier = Modifier.fillMaxHeight(0.7f))
-            SubmitButton(
-                activity,
+        Box {
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp)
-                    .padding(horizontal = 30.dp)
-            )
+                    .fillMaxSize()
+            ) {
+                Spacer(modifier = Modifier.height(40.dp))
+                UserInfoCard()
+                NoteInfoView("Enter your note...")
+                Spacer(modifier = Modifier.height(100.dp))
+                SubmitButton(
+                    activity,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp)
+                        .padding(horizontal = 30.dp)
+                )
+            }
+            UserImage()
         }
-        UserImage()
     }
 }
 

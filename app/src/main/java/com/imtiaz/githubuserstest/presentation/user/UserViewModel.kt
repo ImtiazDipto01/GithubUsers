@@ -28,10 +28,16 @@ class UserViewModel @Inject constructor(
         MutableStateFlow(BaseState.Empty())
     val fetchUsersFlow = _fetchUsersStateFlow.asStateFlow()
 
+    private var _usersListStateFlow: MutableStateFlow<List<GithubUser>> =
+        MutableStateFlow(emptyList())
+    val userListFlow = _usersListStateFlow.asStateFlow()
+
     var errorHandler: ErrorHandler? = null
+    var searchText: String = ""
 
     init {
         pref.clearList()
+        //viewModelScope.launch { getUsers() }
     }
 
     fun fetchUsers(since: Int) {
@@ -62,6 +68,12 @@ class UserViewModel @Inject constructor(
             updateUsersUseCase.execute(since)
         }
 
-    fun getUsers(): Flow<List<GithubUser>> = getUsersUseCase.execute()
+    suspend fun getUsers() {
+        return withContext(Dispatchers.Main) {
+            getUsersUseCase.execute().collect {
+                _usersListStateFlow.value = it
+            }
+        }
+    }
 
 }
