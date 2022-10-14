@@ -25,6 +25,8 @@ class FakeUsersRepositoryImp(
     private val mapper: GithubUserMapper = GithubUserMapper(),
 ) : UsersRepository {
 
+    // [testTag] helps functions to determine which test case wise process the data
+
     override suspend fun fetchUsers(since: Int): Flow<BaseState<List<GithubUser>>> {
         return when (testTag) {
             FETCH_AND_INSERT_USERS_SUCCESS -> successfulFetchAndInsert(since)
@@ -58,43 +60,51 @@ class FakeUsersRepositoryImp(
 
     private suspend fun successfulFetchAndInsert(since: Int): Flow<BaseState<List<GithubUser>>> {
 
+        // mocking our response with a fake api call
         val expectedResponse = MockResponse()
             .setResponseCode(HttpURLConnection.HTTP_OK)
             .setBody(successfullResponse)
         mockServer.enqueue(expectedResponse)
 
+        // parsing & mapping response data to expected data
         val actualResponse = service.fetchUsers(since)
         val result = handleApiResponse(actualResponse)
-
         val users = mapper.mapFromEntityList(result as List<GithubUserResponse>, since)
 
+        // inserting user list and returning flow with success state
         insertUsers(users)
         return flow { emit(BaseState.Success(users)) }
     }
 
     private suspend fun successfulFetchAndInsertFailed(since: Int): Flow<BaseState<List<GithubUser>>> {
 
+        // Mock api call with our expected response
         val expectedResponse = MockResponse()
             .setResponseCode(HttpURLConnection.HTTP_OK)
             .setBody(successfullResponse)
         mockServer.enqueue(expectedResponse)
 
+        // parsing & mapping response data to expected data
         val actualResponse = service.fetchUsers(since)
         val result = handleApiResponse(actualResponse)
-
         val users = mapper.mapFromEntityList(result as List<GithubUserResponse>, since)
 
+        // trying to insert data & returning a flow and emitting Success state
         insertUsers(users)
         return flow { emit(BaseState.Success(users)) }
     }
 
     private suspend fun badResponse(since: Int): Flow<BaseState<List<GithubUser>>> {
+
+        // Hitting a HTTP_INTERNAL_ERROR Mock api call
         val expectedResponse = MockResponse()
             .setResponseCode(HttpURLConnection.HTTP_INTERNAL_ERROR)
         mockServer.enqueue(expectedResponse)
 
+        // getting response
         val actualResponse = service.fetchUsers(since)
 
+        // returning flow with error state
         return flow {
             emit(
                 BaseState.Error(
@@ -106,16 +116,18 @@ class FakeUsersRepositoryImp(
 
     private suspend fun successfulFetchAndUpdateUsers(since: Int): Flow<BaseState<List<GithubUserResponse>>> {
 
+        // Mock api call with our expected updated users response
         val expectedResponse = MockResponse()
             .setResponseCode(HttpURLConnection.HTTP_OK)
             .setBody(updatedUsersResponse)
         mockServer.enqueue(expectedResponse)
 
+        // parsing & mapping response data to expected data
         val actualResponse = service.fetchUsers(since)
         val result = handleApiResponse(actualResponse)
-
         val users = mapper.mapFromEntityList(result as List<GithubUserResponse>, since)
 
+        // updating users and returning a flow and emitting Success state
         updateUsers(users)
         return flow { emit(BaseState.Success(result)) }
     }

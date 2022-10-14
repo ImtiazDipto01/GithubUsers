@@ -30,17 +30,24 @@ class FakeProfileRepositoryImp(
 ) : ProfileRepository {
 
     override suspend fun getUserProfile(loginId: String): Flow<BaseState<GithubUser>> {
+
+        // mocking our response with a fake api call
         val expectedResponse = MockResponse()
             .setResponseCode(HttpURLConnection.HTTP_OK)
             .setBody(profileResponse)
         mockServer.enqueue(expectedResponse)
 
+        // gets response
         val actualResponse = service.getUserProfile(loginId)
-        val result = handleApiResponse(actualResponse)
 
+        // parsing response mapping response data to expected data
+        val result = handleApiResponse(actualResponse)
         val profile = mapper.mapFromEntity(result as UserProfileResponse)
 
+        // updating user
         updateUser(profile)
+
+        // returning flow with successful state
         return flow { emit(BaseState.Success(profile)) }
     }
 
