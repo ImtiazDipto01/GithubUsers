@@ -11,6 +11,4 @@ interface ProfileRepository {
     suspend fun getUserProfileFromDB(id: Int): Flow<GithubUser?>
 
     suspend fun updateUser(user: GithubUser)
-
-    suspend fun updateUserFromApi(user: GithubUser)
 }

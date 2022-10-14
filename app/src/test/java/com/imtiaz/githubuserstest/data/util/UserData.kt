@@ -132,6 +132,41 @@ val updatedUsersResponse = "[\n" +
         "   }\n" +
         "]"
 
+val profileResponse = "{\n" +
+        "    \"login\": \"ImtiazDipto01\",\n" +
+        "    \"id\": 11765327,\n" +
+        "    \"node_id\": \"MDQ6VXNlcjExNzY1MzI3\",\n" +
+        "    \"avatar_url\": \"https://avatars.githubusercontent.com/u/11765327?v=4\",\n" +
+        "    \"gravatar_id\": \"\",\n" +
+        "    \"url\": \"https://api.github.com/users/ImtiazDipto01\",\n" +
+        "    \"html_url\": \"https://github.com/ImtiazDipto01\",\n" +
+        "    \"followers_url\": \"https://api.github.com/users/ImtiazDipto01/followers\",\n" +
+        "    \"following_url\": \"https://api.github.com/users/ImtiazDipto01/following{/other_user}\",\n" +
+        "    \"gists_url\": \"https://api.github.com/users/ImtiazDipto01/gists{/gist_id}\",\n" +
+        "    \"starred_url\": \"https://api.github.com/users/ImtiazDipto01/starred{/owner}{/repo}\",\n" +
+        "    \"subscriptions_url\": \"https://api.github.com/users/ImtiazDipto01/subscriptions\",\n" +
+        "    \"organizations_url\": \"https://api.github.com/users/ImtiazDipto01/orgs\",\n" +
+        "    \"repos_url\": \"https://api.github.com/users/ImtiazDipto01/repos\",\n" +
+        "    \"events_url\": \"https://api.github.com/users/ImtiazDipto01/events{/privacy}\",\n" +
+        "    \"received_events_url\": \"https://api.github.com/users/ImtiazDipto01/received_events\",\n" +
+        "    \"type\": \"User\",\n" +
+        "    \"site_admin\": false,\n" +
+        "    \"name\": \"Imtiaz Uddin Ahmed\",\n" +
+        "    \"company\": null,\n" +
+        "    \"blog\": \"\",\n" +
+        "    \"location\": \"Dhaka\",\n" +
+        "    \"email\": null,\n" +
+        "    \"hireable\": null,\n" +
+        "    \"bio\": \"I'm an Android developer from last 5 years. Always love to learn new features & still learning. Currently learning Flutter development!\",\n" +
+        "    \"twitter_username\": \"ImtiazDipto\",\n" +
+        "    \"public_repos\": 32,\n" +
+        "    \"public_gists\": 17,\n" +
+        "    \"followers\": 21,\n" +
+        "    \"following\": 6,\n" +
+        "    \"created_at\": \"2015-04-02T03:54:15Z\",\n" +
+        "    \"updated_at\": \"2022-10-11T15:02:48Z\"\n" +
+        "}"
+
 val badApiResponse =  "{\"response\":\"Bad Response\"}"
 
 fun getUpdatedUsersResponse(): List<GithubUserResponse> {

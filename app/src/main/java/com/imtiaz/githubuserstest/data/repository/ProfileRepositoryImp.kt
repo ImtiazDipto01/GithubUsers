@@ -48,7 +48,7 @@ class ProfileRepositoryImp @Inject constructor(
         }
     }
 
-    override suspend fun updateUserFromApi(user: GithubUser) {
+    private suspend fun updateUserFromApi(user: GithubUser) {
         try {
             val prevUser = userDao.getUser(user.id)
             prevUser?.let {
